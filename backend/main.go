@@ -1,10 +1,13 @@
 package main
 
 import (
-	"net/http"
     "github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 	"github.com/joho/godotenv"
+	"gorm.io/gorm" 
+	"backend/database" 
+	"backend/models"
+	"fmt"
 )
 //FocusSession structure(like a class in Java)
 type FocusSession struct {
@@ -22,10 +25,15 @@ func main() {
 		panic("Error loading .env file")
 	}
 
+	if err := database.ConnectToDataBase(); err != nil {
+        panic("Failed to connect to database: " + err.Error())
+    }
+	//creating/updating a table to match the FocusSession struct
 	database.DB.AutoMigrate(&models.FocusSession{})
-
+	
 	//new router instance
 	r := gin.Default()
+	fmt.Println("new router instance created")
 
 	r.Use(cors.Default())
 

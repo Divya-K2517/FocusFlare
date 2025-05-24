@@ -10,7 +10,7 @@ import (
 //database connection
 var DB *gorm.DB
 
-func connectToDataBase() {
+func ConnectToDataBase() error {
 	//creating database connection string
 	//data source name
 	dsn := fmt.Sprintf(
@@ -29,7 +29,7 @@ func connectToDataBase() {
 	})
 
 	if err != nil {
-		panic("Failed to connect to database")
+		return err
 	}
 
 	fmt.Println("Database connection complete")
@@ -40,4 +40,6 @@ func connectToDataBase() {
 	sqlDB, _ := DB.DB()
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
+
+	return nil
 }

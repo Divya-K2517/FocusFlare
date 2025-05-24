@@ -28,10 +28,14 @@ function App() {
   //uses post to send a new focus session to backend
   //res is the response, will add the new session to the list of sessions and re-render
   const addSession = () => {
-    axios.post('http://localhost:8080/sessions', { date, hours })
+     //making the date into RFC3339 format
+     //"YYYY-MM-DDTHH:mm:ss.sssZ"
+    const formattedDate = new Date(date).toISOString(); 
+    //sending to backend
+    axios.post('http://localhost:8080/sessions', { date: formattedDate, hours })
       .then(res => setSessions([...sessions, res.data]));
   };
-
+  console.log("current sessions: ", sessions);
   return (
     <div style={{ padding: 24 }}>
       <h1>Study Tracker</h1>
@@ -41,9 +45,14 @@ function App() {
         <button onClick={addSession}>Add Session</button>
       </div>
       <ul>
-        {sessions.map(s => (
-          <li key={s.id}>{s.date}: {s.hours} hour(s)</li>
-        ))}
+        {sessions.map(s => {
+          let d = new Date(s.date);
+          const mm = String(d.getMonth() + 1).padStart(2, '0');
+          const dd = String(d.getDay()).padStart(2, '0');
+          const yy = String(d.getFullYear()).slice(-2);
+          const formattedDate = `${mm}/${dd}/${yy}`;
+          return (<li key={s.id}>{formattedDate}: {s.hours} hour(s)</li>);
+        })}
       </ul>
     </div>
   );
