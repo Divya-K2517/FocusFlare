@@ -33,12 +33,14 @@ func main() {
 	
 	//new router instance
 	r := gin.Default()
-	fmt.Println("new router instance created")
+	fmt.Println(".env loaded, connected to database, new router instance created")
 
 	r.Use(cors.Default())
-
+	
 	//method to get all sessions
 	r.GET("/sessions", func(c *gin.Context) {
+		//c represents the current HTTP request
+		fmt.Println("getting all sessions")
 		var sessions []models.FocusSession
 		//sorting by date, newest first 
 		//fills the sessions array
@@ -56,6 +58,7 @@ func main() {
 
 	//method to add a session
 	r.POST("/sessions", func(c *gin.Context) {
+		fmt.Println("adding a session")
 		var incomingSession models.FocusSession
 		//NOTES:
 		//first populating focusSession with what the client sent
@@ -64,7 +67,8 @@ func main() {
 		//c.BindJSON() will read the JSON body of a request,
 		//then decode it into the pointer variable(assign pointer variable to the incoming request),
 		// and return an error if one occured
-		if err := c.BindJSON(&incomingSession); err != nil {
+		err := c.BindJSON(&incomingSession);
+		if err != nil {
 			c.JSON(400, gin.H{"error": err.Error()})
 			return
 		}
@@ -76,7 +80,8 @@ func main() {
 		//tx *gorm.DB passes a new *gorm.DB instance called tx into the func
 		//tx is like a temp database
 		err := database.DB.Transaction(func(tx *gorm.DB) error {
-			if err := tx.Create(&incomingSession).Error; err != nil {
+			err := tx.Create(&incomingSession).Error;
+			if err != nil {
 				return err
 			}
 			return nil
@@ -89,6 +94,24 @@ func main() {
 
 		c.JSON(201, incomingSession)
 	})
+	//method to delete sessions
+	r.DELETE("/sessions/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		var session models.FocusSession //destination variable for .First()
+		//finding the session by id
+		err := database.DB.First(&session, id).Error
+		if err != nil {
+			c.JSON(404, gin.H{"error": "Session not found"})
+			return
+		}
+		//deleting the session
+		err := database.DB.Delate(&session).Error
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Session was not successfully deleted"})
+			return
+		}
 
+		c.JSON(200, gin.H{"message": "Session was successfully deleted"})
+	})
 	r.Run(":8080")
 }
