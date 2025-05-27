@@ -8,6 +8,7 @@ import (
 	"backend/database" 
 	"backend/models"
 	"fmt"
+	"time"
 )
 //FocusSession structure(like a class in Java)
 // type FocusSession struct {
@@ -75,7 +76,11 @@ func main() {
 		if incomingSession.Date.IsZero() {
 			c.JSON(400, gin.H{"error": "Date is required"})
 			return
+		} else if !IsValidDate(incomingSession.Date) {
+			c.JSON(400, gin.H{"error": "Date needs to be on or before today"})
+			return
 		}
+
 		//using a transaction
 		//tx *gorm.DB passes a new *gorm.DB instance called tx into the func
 		//tx is like a temp database
@@ -114,4 +119,12 @@ func main() {
 		c.JSON(200, gin.H{"message": "Session was successfully deleted"})
 	})
 	r.Run(":8080")
+}
+
+func IsValidDate(date time.Time) bool {
+	now := time.Now();
+	today := time.Date(now.Year(), now.Month(), now.Day(), int(0),int(0),int(0),int(0), now.Location())
+	input := time.Date(date.Year(), date.Month(), date.Day(), int(0),int(0),int(0),int(0), date.Location())
+
+	return today.After(input)
 }
