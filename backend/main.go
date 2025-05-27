@@ -10,14 +10,14 @@ import (
 	"fmt"
 )
 //FocusSession structure(like a class in Java)
-type FocusSession struct {
-	ID int `json:"id"`
-	Date string `json:"date"`
-	Hours float32 `json:"hours"`
-}
+// type FocusSession struct {
+// 	ID int `json:"id"`
+// 	Date string `json:"date"`
+// 	Hours float32 `json:"hours"`
+// }
 
-var sessions = []FocusSession{} //array of sessions
-var nextID = 1
+// var sessions = []FocusSession{} //array of sessions
+// var nextID = 1
 
 func main() {
 	//loading .env first
@@ -79,7 +79,7 @@ func main() {
 		//using a transaction
 		//tx *gorm.DB passes a new *gorm.DB instance called tx into the func
 		//tx is like a temp database
-		err := database.DB.Transaction(func(tx *gorm.DB) error {
+		err = database.DB.Transaction(func(tx *gorm.DB) error {
 			err := tx.Create(&incomingSession).Error;
 			if err != nil {
 				return err
@@ -105,7 +105,7 @@ func main() {
 			return
 		}
 		//deleting the session
-		err := database.DB.Delate(&session).Error
+		err = database.DB.Delete(&session).Error
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Session was not successfully deleted"})
 			return
