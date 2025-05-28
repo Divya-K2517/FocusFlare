@@ -9,6 +9,7 @@ import (
 	"backend/models"
 	"fmt"
 	"time"
+	"log"
 )
 //FocusSession structure(like a class in Java)
 // type FocusSession struct {
@@ -16,7 +17,8 @@ import (
 // 	Date string `json:"date"`
 // 	Hours float32 `json:"hours"`
 // }
-
+//dict to track total hours per day
+var dailyTotals = make(map[string]float32) 
 
 func main() {
 	//loading .env first
@@ -78,9 +80,9 @@ func main() {
 			c.JSON(400, gin.H{"error": "Date needs to be on or before today"})
 			return
 		}
-		//initializing an intensity and month
-		incomingSession.Month = findMonth(incomingSession.Date)
-		incomingSession.intensity = calculateIntensity(incomingSession)
+		//initializing a month
+		incomingSession.Month = incomingSession.Date.Month().String()
+
 		//using a transaction
 		//tx *gorm.DB passes a new *gorm.DB instance called tx into the func
 		//tx is like a temp database
@@ -92,11 +94,39 @@ func main() {
 			return nil
 		}) 
 
+		//adding session to total for the day
+		//getting the sum of hours per day from the data base
+		rows, err := database.DB.Model(&models.FocusSession{}).
+			Select(`DATE("date") AS day, SUM(hours) AS total_hours`).
+			Group(`DATE("date")`).
+    		Rows()
+		if err != nil {
+			log.Fatal(err)
+			fmt.Println(err)
+		}
+		defer rows.Close() //letting go of the connection to database
+		for rows.Next() {
+			var day time.Time
+			var total float32
+			//scanning the day and total hours from rows into day and total
+			err := rows.Scan(&day, &total); 
+			if err != nil {
+				log.Fatal(err)
+				fmt.Println(err)
+			}
+			dayString := day.Format("2006-01-02")
+			dailyTotals[dayString] = total
+		}
+
+		//intensity = calculateIntensity(incomingSession.Date)
+		fmt.Println("daily totals: ", dailyTotals)
+
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Failed to save session"})
 			return
 		}
-		fmt.Println("intensity and month:", incomingSession.Intensity, incomingSession.Month)
+
+		fmt.Println("month:", incomingSession.Month)
 		fmt.Println("session added successfully")
 		c.JSON(201, incomingSession)
 	})
@@ -129,37 +159,7 @@ func IsValidDate(date time.Time) bool {
 
 	return today.After(input)
 }
-func calculateIntensity(session FocusSession) int {
+func calculateIntensity(date time.Time) int {
 	//TODO
-}
-func findMonth(date time.Time) string {
-	monthNum := date.Month
-	var month string
-	switch monthNum {
-	case 1:
-		month = "January"
-	case 2:
-		month = "Febuary"
-	case 3:
-		month = "March"
-	case 4:
-		month = "April"
-	case 5:
-		month = "May"
-	case 6:
-		month = "June"
-	case 7:
-		month = "July"
-	case 8:
-		month = "August"
-	case 9:
-		month = "September"
-	case 10:
-		month = "October"
-	case 11:
-		month = "November"
-	case 12:
-		month = "December"
-	}
-	return month
+	return 0
 }
