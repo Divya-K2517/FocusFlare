@@ -39,7 +39,7 @@ function HeatmapPage() {
   console.log("current sessions: ", sessions);
   return (
     <div style={{ padding: 24 }}>
-      <h1>Study Tracker</h1>
+      <h1>Focus Flare</h1>
       <div>
         <input type="date" value={date} onChange={e => setDate(e.target.value)} />
         <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />

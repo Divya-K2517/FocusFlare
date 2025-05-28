@@ -17,8 +17,6 @@ import (
 // 	Hours float32 `json:"hours"`
 // }
 
-// var sessions = []FocusSession{} //array of sessions
-// var nextID = 1
 
 func main() {
 	//loading .env first
@@ -80,7 +78,9 @@ func main() {
 			c.JSON(400, gin.H{"error": "Date needs to be on or before today"})
 			return
 		}
-
+		//initializing an intensity and month
+		incomingSession.Month = findMonth(incomingSession.Date)
+		incomingSession.intensity = calculateIntensity(incomingSession)
 		//using a transaction
 		//tx *gorm.DB passes a new *gorm.DB instance called tx into the func
 		//tx is like a temp database
@@ -96,7 +96,8 @@ func main() {
 			c.JSON(500, gin.H{"error": "Failed to save session"})
 			return
 		}
-
+		fmt.Println("intensity and month:", incomingSession.Intensity, incomingSession.Month)
+		fmt.Println("session added successfully")
 		c.JSON(201, incomingSession)
 	})
 	//method to delete sessions
@@ -127,4 +128,38 @@ func IsValidDate(date time.Time) bool {
 	input := time.Date(date.Year(), date.Month(), date.Day(), int(0),int(0),int(0),int(0), date.Location())
 
 	return today.After(input)
+}
+func calculateIntensity(session FocusSession) int {
+	//TODO
+}
+func findMonth(date time.Time) string {
+	monthNum := date.Month
+	var month string
+	switch monthNum {
+	case 1:
+		month = "January"
+	case 2:
+		month = "Febuary"
+	case 3:
+		month = "March"
+	case 4:
+		month = "April"
+	case 5:
+		month = "May"
+	case 6:
+		month = "June"
+	case 7:
+		month = "July"
+	case 8:
+		month = "August"
+	case 9:
+		month = "September"
+	case 10:
+		month = "October"
+	case 11:
+		month = "November"
+	case 12:
+		month = "December"
+	}
+	return month
 }
