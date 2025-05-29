@@ -17,8 +17,10 @@ import (
 // 	Date string `json:"date"`
 // 	Hours float32 `json:"hours"`
 // }
+
 //dict to track total hours per day
-var dailyTotals = make(map[string]float32) 
+// e.g., "2025-05" -> { "2025-05-26": 3.5, "2025-05-27": 2.0 }
+var monthlyTotals = make(map[string]map[string]float32)
 
 func main() {
 	//loading .env first
@@ -56,10 +58,10 @@ func main() {
 		//will send back a JSON array of sessions
 		//func(c *gin.Context) is the method handler
 	})
-	//method to get the daily totals map
-	r.GET("/daily-totals", func(c *gin.Context) {
-		fmt.Println("sending daily totals to frontend")
-		c.JSON(200, dailyTotals)
+	//method to get the monthly totals map
+	r.GET("/monthly-totals", func(c *gin.Context) {
+		fmt.Println("sending monthly totals to frontend")
+		c.JSON(200, monthlyTotals)
 	})
 	//method to add a session
 	r.POST("/sessions", func(c *gin.Context) {
@@ -105,8 +107,7 @@ func main() {
 			Group(`DATE("date")`).
     		Rows()
 		if err != nil {
-			log.Fatal(err)
-			fmt.Println(err)
+			log.Fatal("error retrieving hours per day from database", err)
 		}
 
 		defer rows.Close() //letting go of the connection to database
@@ -116,15 +117,21 @@ func main() {
 			//scanning the day and total hours from rows into day and total
 			err := rows.Scan(&day, &total); 
 			if err != nil {
-				log.Fatal(err)
-				fmt.Println(err)
+				log.Fatal("error scanning row: ", err) //will print the error and exit the program
 			}
-			dayString := day.Format("2006-01-02")
-			dailyTotals[dayString] = total
+
+			dayString := fmt.Sprintf("%d", day.Day()) 
+			monthString := day.Format("2006-01")
+			
+			month, exists := monthlyTotals[monthString];
+			if !exists {
+				monthlyTotals[monthString] = make(map[string]float32)
+			}
+			monthlyTotals[monthString][dayString] = total
+
 		}
 
-		//intensity = calculateIntensity(incomingSession.Date)
-		fmt.Println("daily totals: ", dailyTotals)
+		fmt.Println("monthly totals: ", monthlyTotals)
 
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Failed to save session"})

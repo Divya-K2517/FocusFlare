@@ -21,8 +21,8 @@ function HeatmapPage() {
   //month/yr that is currently displayed
   const [displayYr, setDisplayYr] = useState(() => new Date().getFullYear());
   const [displayMonth, setDisplayMonth] = useState(() => new Date().getMonth());
-  //getting daily totals map
-  const [dailyTotals, setDailyTotals] = useState<Record<string, number>>({});
+  //getting monthly totals map
+  const [monthlyTotals, setMonthlyTotals] = useState<Map<string, Map<string, number>>>({});
   
   //makes a get request to the backend to get all the sessions
   //res is the response
@@ -31,9 +31,17 @@ function HeatmapPage() {
     axios.get('http://localhost:8080/sessions')
       .then(res => setSessions(res.data));
 
-    axios.get<Record<string, number>>('http://localhost:8080/daily-totals')
-        .then(res => setDailyTotals(res.data))
-        .catch(err => console.error("Error fetching daily totals map: ", err))
+    axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals')
+        .then(res =>  { //need to convert the object into a map bc json from the backend will return a plain object not a map
+            const raw = res.data;
+            const mapData = new Map<string, Map<string, number>>();
+            for (const [monthKey, days] of Object.entries(raw)) {
+                const dayMap = new Map<string, number>(Object.entries(days));
+                mapData.set(monthKey, dayMap);
+            }
+            setMonthlyTotals(mapData)
+        })
+        .catch(err => console.error("Error fetching monthly totals map: ", err))
   }, []);
 
   //uses post to send a new focus session to backend
@@ -68,7 +76,7 @@ function HeatmapPage() {
     });
   }
 
-  const tiles = getDisplayMonthTiles(displayMonth, displayYr)//will hold all the tiles for current month
+  const tiles = getDisplayMonthTiles(displayMonth, displayYr, monthlyTotals)//will hold all the tiles for current month
   
   return (
     <div style={{ padding: 24 }}>
@@ -97,19 +105,36 @@ function HeatmapPage() {
   );
 }
 
-function getDisplayMonthTiles(displayMonth: number, displayYr: number) {
+function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTotals: Map<string, Map<string, number>>) {
     const daysInMonth = new Date(displayYr, displayMonth + 1, 0).getDate();
     const firstDayOfWeek = new Date(displayYr, displayMonth, 1).getDay();
     //array for ech month will have 6 rows and 7 columns
-    let tiles: JSX.Element[][] = [];
+    let tiles: JSX.Element[][] = Array.from({ length: 6 }, () => []);
     //filling the empty days at the beginning
     for (let i = 0; i < firstDayOfWeek; i++) { 
         tiles[0].push(<div key={`empty-${i}`} className="tile empty"></div>)
     }
-    //filling the actual days 
-    for (let day = 0; day < daysInMonth; day++) {
-        //TODO
+
+    //filling the actual days of the month 
+    const monthMap = monthlyTotals.get(`${displayYr}-${String(displayMonth + 1).padStart(2,'0')}`); //extracting the map for that month
+    //finding the max amount of focused hours in that month
+    let maxHrs = 0;
+    if (monthMap) { //incase the month doesn't exist
+        for (const value of monthMap.values()) {
+            if (value > maxHrs) maxHrs = value;
+        }
+        for (let day = 1; day < daysInMonth + 1; day++) {
+            //TODO
+            const hours = monthMap.get(String(day)); //hours focused that day
+            if (hours) { //incase the specific day has no hours logged, hours will be undefined
+                const colorIntensity = hours / maxHrs;
+                const color = `rgba(255, 0, 0, ${colorIntensity})`;
+                tiles[].push(<div key={day} className="tile" style={background: color}>{day}</div>);
+            } 
+        }
     }
+    
+    
     return tiles;
 }
 export default HeatmapPage;
