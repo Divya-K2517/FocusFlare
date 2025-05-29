@@ -56,7 +56,11 @@ func main() {
 		//will send back a JSON array of sessions
 		//func(c *gin.Context) is the method handler
 	})
-
+	//method to get the daily totals map
+	r.GET("/daily-totals", func(c *gin.Context) {
+		fmt.Println("sending daily totals to frontend")
+		c.JSON(200, dailyTotals)
+	})
 	//method to add a session
 	r.POST("/sessions", func(c *gin.Context) {
 		fmt.Println("adding a session")
@@ -104,6 +108,7 @@ func main() {
 			log.Fatal(err)
 			fmt.Println(err)
 		}
+
 		defer rows.Close() //letting go of the connection to database
 		for rows.Next() {
 			var day time.Time
