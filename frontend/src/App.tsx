@@ -13,14 +13,33 @@ import SessionsPage from './SessionsPage';
 // }
 
 function App() {
+  //monthly totals needs to be accessed by both the heatmap and past sessions page
+  //so it is defined here
+  const [monthlyTotals, setMonthlyTotals] = useState<Map<string, Map<string, number>>>(new Map());
   return (
     <Router>
       <nav>
         <Link to="/">Heatmap</Link> | <Link to ="/sessions">Past Sessions</Link>
       </nav>
       <Routes>
-        <Route path="/" element={<HeatmapPage/>}/>
-        <Route path="/sessions" element={<SessionsPage/>}/>
+        <Route 
+          path="/" 
+          element={
+            <HeatmapPage 
+              monthlyTotals={monthlyTotals}
+              setMonthlyTotals={setMonthlyTotals}
+            />
+          }
+        />
+        <Route 
+          path="/sessions" 
+          element={
+            <SessionsPage
+              monthlyTotals={monthlyTotals}
+              setMonthlyTotals={setMonthlyTotals}
+            />
+          }
+        />
       </Routes>
     </Router>
   );

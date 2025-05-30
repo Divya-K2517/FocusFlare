@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"time"
 	"log"
+	"database/sql"
 )
 //FocusSession structure(like a class in Java)
 // type FocusSession struct {
@@ -20,7 +21,6 @@ import (
 
 //dict to track total hours per day
 // e.g., "2025-05" -> { "2025-05-26": 3.5, "2025-05-27": 2.0 }
-var monthlyTotals = make(map[string]map[string]float32)
 
 func main() {
 	//loading .env first
@@ -60,7 +60,25 @@ func main() {
 	})
 	//method to get the monthly totals map
 	r.GET("/monthly-totals", func(c *gin.Context) {
+		//monthly totals is not a global variable in the backend!
+		//instead, anytime the frontend wants to access monthly totals, it will access this endpoint
+		//this endpoint dynamically queries the database,
+		//calculates monthly totals, and returns is
+		//ultimately, this ensures that monthly totals and the heatmap are always up-to-date
 		fmt.Println("sending monthly totals to frontend")
+		//querying the database for all sessions
+		rows, err := database.DB.Model(&models.FocusSession{}).
+			//getting the sum of hours per day, grouped by date
+			Select(`DATE("date") AS day, SUM(hours) AS total_hours`).
+			Group(`DATE("date")`).
+			Rows()
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Failed to retrieve hours per day from database"})
+        	return
+		}
+		defer rows.Close() //letting go of the connection to database
+		monthlyTotals := rebuildMonthlyTotals(rows);
+		fmt.Println("retrieved monthly totals: ", monthlyTotals)
 		c.JSON(200, monthlyTotals)
 	})
 	//method to add a session
@@ -99,40 +117,6 @@ func main() {
 			}
 			return nil
 		}) 
-
-		//adding session to total for the day
-		//getting the sum of hours per day from the data base
-		rows, err := database.DB.Model(&models.FocusSession{}).
-			Select(`DATE("date") AS day, SUM(hours) AS total_hours`).
-			Group(`DATE("date")`).
-    		Rows()
-		if err != nil {
-			log.Fatal("error retrieving hours per day from database", err)
-		}
-
-		defer rows.Close() //letting go of the connection to database
-		for rows.Next() {
-			var day time.Time
-			var total float32
-			//scanning the day and total hours from rows into day and total
-			err := rows.Scan(&day, &total); 
-			if err != nil {
-				log.Fatal("error scanning row: ", err) //will print the error and exit the program
-			}
-
-			dayString := fmt.Sprintf("%d", day.Day()) 
-			monthString := day.Format("2006-01")
-			
-			_, exists := monthlyTotals[monthString];
-			if !exists {
-				monthlyTotals[monthString] = make(map[string]float32)
-			}
-			monthlyTotals[monthString][dayString] = total
-
-		}
-
-		fmt.Println("monthly totals: ", monthlyTotals)
-
 		if err != nil {
 			c.JSON(500, gin.H{"error": "Failed to save session"})
 			return
@@ -170,5 +154,26 @@ func IsValidDate(date time.Time) bool {
 	input := time.Date(date.Year(), date.Month(), date.Day(), int(0),int(0),int(0),int(0), date.Location())
 
 	return today.After(input)
+}
+func rebuildMonthlyTotals(rows *sql.Rows) map[string]map[string]float32{ //will return a new monthly totals
+	monthlyTotals := make(map[string]map[string]float32)
+	for rows.Next() {
+		var day time.Time
+		var total float32
+		//scanning the day and total hours from rows into day and total
+		err := rows.Scan(&day, &total); 
+		if err != nil {
+			log.Fatal("error scanning row: ", err) //will print the error and exit the program
+		}
+		dayString := fmt.Sprintf("%d", day.Day()) 
+		monthString := day.Format("2006-01")
+		
+		_, exists := monthlyTotals[monthString];
+		if !exists {
+			monthlyTotals[monthString] = make(map[string]float32)
+		}
+		monthlyTotals[monthString][dayString] = total
+	}
+	return monthlyTotals
 }
 

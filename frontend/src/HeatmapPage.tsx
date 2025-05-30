@@ -10,8 +10,11 @@ type FocusSession = {
   date: string;
   hours: number;
 }
-
-function HeatmapPage() {
+type HeatmapPageProps = { //to receive monthly totals from App.tsx
+    monthlyTotals: Map<string, Map<string, number>>;
+    setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
+};
+function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //creating a sessions state variable which is an array of Focus Sessions
   //setSessions will update sessions
   //0.5 is the default amount of hours
@@ -21,8 +24,6 @@ function HeatmapPage() {
   //month/yr that is currently displayed
   const [displayYr, setDisplayYr] = useState(() => new Date().getFullYear());
   const [displayMonth, setDisplayMonth] = useState(() => new Date().getMonth());
-  //getting monthly totals map
-  const [monthlyTotals, setMonthlyTotals] = useState<Map<string, Map<string, number>>>(new Map());
   
   //makes a get request to the backend to get all the sessions
   //res is the response
@@ -41,7 +42,7 @@ function HeatmapPage() {
             }
             setMonthlyTotals(mapData)
         })
-        .catch(err => console.error("Error fetching monthly totals map: ", err))
+        .catch(err => console.error("Error fetching monthly totals map: ", err));
   }, []);
 
   //uses post to send a new focus session to backend
@@ -90,7 +91,7 @@ function HeatmapPage() {
         return prev + 1;
     });
   }
-
+  //TODO: make sure that when a user deletes a session the heatmap is updated immediately
   const tiles = getDisplayMonthTiles(displayMonth, displayYr, monthlyTotals)//will hold all the tiles for current month
   
   return (
