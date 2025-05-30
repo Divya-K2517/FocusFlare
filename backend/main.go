@@ -123,7 +123,7 @@ func main() {
 			dayString := fmt.Sprintf("%d", day.Day()) 
 			monthString := day.Format("2006-01")
 			
-			month, exists := monthlyTotals[monthString];
+			_, exists := monthlyTotals[monthString];
 			if !exists {
 				monthlyTotals[monthString] = make(map[string]float32)
 			}
@@ -158,7 +158,7 @@ func main() {
 			c.JSON(500, gin.H{"error": "Session was not successfully deleted"})
 			return
 		}
-
+		//TODO: remove the session from monthly totals
 		c.JSON(200, gin.H{"message": "Session was successfully deleted"})
 	})
 	r.Run(":8080")
@@ -171,7 +171,4 @@ func IsValidDate(date time.Time) bool {
 
 	return today.After(input)
 }
-func calculateIntensity(date time.Time) int {
-	//TODO
-	return 0
-}
+

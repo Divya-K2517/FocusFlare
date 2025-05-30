@@ -22,7 +22,7 @@ function HeatmapPage() {
   const [displayYr, setDisplayYr] = useState(() => new Date().getFullYear());
   const [displayMonth, setDisplayMonth] = useState(() => new Date().getMonth());
   //getting monthly totals map
-  const [monthlyTotals, setMonthlyTotals] = useState<Map<string, Map<string, number>>>({});
+  const [monthlyTotals, setMonthlyTotals] = useState<Map<string, Map<string, number>>>(new Map());
   
   //makes a get request to the backend to get all the sessions
   //res is the response
@@ -52,7 +52,22 @@ function HeatmapPage() {
     const formattedDate = new Date(date).toISOString(); 
     //sending to backend
     axios.post('http://localhost:8080/sessions', { date: formattedDate, hours })
-      .then(res => setSessions([...sessions, res.data]));
+      .then(res => {
+        setSessions([...sessions, res.data]);
+        // getting the updated monthly totals from backend 
+        return axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals');
+      })
+      .then(res => { 
+        //resetting monthly totals
+        //every time a session is added, monthly totals will be reset
+        const raw = res.data;
+        const mapData = new Map<string, Map<string, number>>();
+        for (const [monthKey, days] of Object.entries(raw)) {
+            const dayMap = new Map<string, number>(Object.entries(days));
+            mapData.set(monthKey, dayMap);
+        }
+        setMonthlyTotals(mapData)
+      })
   };
   console.log("current sessions: ", sessions);
   
@@ -96,9 +111,11 @@ function HeatmapPage() {
           return (<li key={s.id}>{formattedDate}: {s.hours} hour(s)</li>);
         })}
       </ul>
-      <button className="changeMonth" onClick={goToNextMonth}>Next &gt</button>
-      <button className="changeMonth" onClick={goToPrevMonth}>Prev &lt</button>
+      <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
+      <span>{new Date(displayYr, displayMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+      <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
       <div className="heatmap">
+        {/* TODO: add day labels above the columns */}
         {tiles}
       </div>
     </div>
@@ -108,11 +125,12 @@ function HeatmapPage() {
 function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTotals: Map<string, Map<string, number>>) {
     const daysInMonth = new Date(displayYr, displayMonth + 1, 0).getDate();
     const firstDayOfWeek = new Date(displayYr, displayMonth, 1).getDay();
+    const noHrsDayColor = `rgba(100, 100, 100)` //color for days where there are no hours logged
     //array for ech month will have 6 rows and 7 columns
-    let tiles: JSX.Element[][] = Array.from({ length: 6 }, () => []);
+    let tiles: JSX.Element[] = [];
     //filling the empty days at the beginning
     for (let i = 0; i < firstDayOfWeek; i++) { 
-        tiles[0].push(<div key={`empty-${i}`} className="tile empty"></div>)
+        tiles.push(<div key={`empty-${i}`} className="tile empty"></div>)
     }
 
     //filling the actual days of the month 
@@ -127,14 +145,20 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
             //TODO
             const hours = monthMap.get(String(day)); //hours focused that day
             if (hours) { //incase the specific day has no hours logged, hours will be undefined
-                const colorIntensity = hours / maxHrs;
+                const colorIntensity = maxHrs > 0 ? hours / maxHrs : 0;
                 const color = `rgba(255, 0, 0, ${colorIntensity})`;
-                tiles[].push(<div key={day} className="tile" style={background: color}>{day}</div>);
-            } 
-        }
+                tiles.push(<div key={day} className="tile" style={{background: color}}>{day}</div>);
+            } else if (!hours) {
+                tiles.push(<div key={day} className="tile" style={{background: noHrsDayColor}}>{day}</div>);
+            }
+        } 
+    } else { //if nothing is logged for the map
+        for (let day = 1; day < daysInMonth + 1; day++) {
+            //making all the days 
+            tiles.push(<div key={day} className="tile" style={{background: noHrsDayColor}}>{day}</div>);
+        } 
     }
-    
-    
+    console.log("tiles: ", tiles);
     return tiles;
 }
 export default HeatmapPage;
