@@ -22,8 +22,8 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   const [date, setDate] = useState('');
   const [hours, setHours] = useState(0.5);
   //month/yr that is currently displayed
-  const [displayYr, setDisplayYr] = useState(() => new Date().getFullYear());
-  const [displayMonth, setDisplayMonth] = useState(() => new Date().getMonth());
+  //displaydate is an object w/ two properties: month and yr (displayDate.month, displayDate.yr)
+  const [displayDate, setDisplayDate] = useState<{ month: number; yr: number }>({month: new Date().getMonth(), yr: new Date().getFullYear()}); 
   
   //makes a get request to the backend to get all the sessions
   //res is the response
@@ -74,25 +74,22 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   
   //change month handlers
   const goToPrevMonth = () => {
-    setDisplayMonth(prev => {
-        if (prev === 0) { //if the month is janurary then prev = 0
-            setDisplayYr(y => y - 1);
-            return 11; //11 = december
+    setDisplayDate(prev => {
+        if (prev.month === 0) { //if the month is janurary then prev = 0
+            return {month: 11, yr: prev.yr - 1}; //11 = december
         }
-        return prev - 1;
+        return {month: prev.month - 1, yr: prev.yr};
     });
   };
   const goToNextMonth = () => {
-    setDisplayMonth(prev => {
-        if (prev === 11) { //if the month is december then prev = 11
-            setDisplayYr(y => y + 1);
-            return 0; //0 = january
+    setDisplayDate(prev => {
+        if (prev.month === 11) { //if the month is december then prev = 11
+            return {month: 0, yr: prev.yr + 1}; //0 = january
         }
-        return prev + 1;
+        return {month: prev.month + 1, yr: prev.yr};
     });
   }
-  //TODO: make sure that when a user deletes a session the heatmap is updated immediately
-  const tiles = getDisplayMonthTiles(displayMonth, displayYr, monthlyTotals)//will hold all the tiles for current month
+  const tiles = getDisplayMonthTiles(displayDate.month, displayDate.yr, monthlyTotals)//will hold all the tiles for current month
   
   return (
     <div style={{ padding: 24 }}>
@@ -113,7 +110,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
         })}
       </ul>
       <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
-      <span>{new Date(displayYr, displayMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+      <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
       <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
       <div className="heatmap">
         {/* TODO: add day labels above the columns */}
