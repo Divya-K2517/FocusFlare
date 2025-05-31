@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import HeatmapPage from './HeatmapPage';
-import SessionsPage from './SessionsPage';
+import InstructionsPage from './InstructionsPage';
 
 // type FocusSession = {
 //   id: number;
@@ -19,7 +19,7 @@ function App() {
   return (
     <Router>
       <nav>
-        <Link to="/">Heatmap</Link> | <Link to ="/sessions">Past Sessions</Link>
+        <Link to ="/instructions">Instructions</Link> | <Link to="/">Heatmap</Link>
       </nav>
       <Routes>
         <Route 
@@ -32,11 +32,9 @@ function App() {
           }
         />
         <Route 
-          path="/sessions" 
+          path="/instructions" 
           element={
-            <SessionsPage
-              monthlyTotals={monthlyTotals}
-              setMonthlyTotals={setMonthlyTotals}
+            <InstructionsPage
             />
           }
         />

@@ -14,6 +14,17 @@ type HeatmapPageProps = { //to receive monthly totals from App.tsx
     monthlyTotals: Map<string, Map<string, number>>;
     setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
 };
+//sessions page things
+// type FocusSession = {
+//     id: number;
+//     date: string;
+//     hours: number;
+// }
+type SessionsPageProps = { //to receive monthly totals from App.tsx
+    monthlyTotals: Map<string, Map<string, number>>;
+    setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
+};
+
 function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //creating a sessions state variable which is an array of Focus Sessions
   //setSessions will update sessions
@@ -90,31 +101,87 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
     });
   }
   const tiles = getDisplayMonthTiles(displayDate.month, displayDate.yr, monthlyTotals)//will hold all the tiles for current month
-  
+  //past sessions stuff
+   //creating a sessions state variable which is an array of Focus Sessions
+   //NOTNEEDED RN: const [sessions, setSessions] = useState<FocusSession[]>([]);
+   //calls fetchSessions when the component loads
+   useEffect(() => {
+       fetchSessions();
+   }, []);
+
+   const fetchSessions = () => {
+       return axios.get('http://localhost:8080/sessions')
+           .then(res => setSessions(res.data))
+           .catch(err => console.error("Failed to fetch sessions:", err));
+       //fetchSessions returns a Promise, ensuring it will finish before the program contintues
+   };
+   //
+   const deleteSession = (id: number) => {
+       //when delete session is pressed:
+       //1: DELETE request sent to backend to remove session by id
+       //2: updated list of sessions is fetched from backend
+       //3: updated monthly totals is fetched from backend (monthly totals is recalculated server-side)
+       //4: monthly totals object is converted into a map
+       //5: monthly totals is updated through setMonthlyTotals
+       //6: after setMonthlyTotals() is called, a re-render of any components dependent on monthlyTotals is trigged (since monthly totals is a state variable)
+       axios.delete(`http://localhost:8080/sessions/${id}`)
+           .then(() => fetchSessions())
+           .then(() => {
+               return axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals');
+           })
+           .then(res => {
+               //need to convert the object into a map bc json from the backend will return a plain object not a map
+               const raw = res.data;
+               const mapData = new Map<string, Map<string, number>>();
+               for (const [monthKey, days] of Object.entries(raw)) {
+                   const dayMap = new Map<string, number>(Object.entries(days));
+                   mapData.set(monthKey, dayMap);
+               }
+               console.log("new monthly totals: ", mapData);
+               setMonthlyTotals(mapData)
+           })
+           .catch(err => console.error("Failed to delete session:", err));
+   };
+
   return (
     <div style={{ padding: 24 }}>
-      <h1>Focus Flare</h1>
-      <div>
-        <input type="date" value={date} onChange={e => setDate(e.target.value)} />
-        <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
-        <button onClick={addSession}>Add Session</button>
-      </div>
-      <ul>
-        {sessions.map(s => {
-          let d = new Date(s.date);
-          const mm = String(d.getMonth() + 1).padStart(2, '0');
-          const dd = String(d.getDate()).padStart(2, '0');
-          const yy = String(d.getFullYear()).slice(-2);
-          const formattedDate = `${mm}/${dd}/${yy}`;
-          return (<li key={s.id}>{formattedDate}: {s.hours} hour(s)</li>);
-        })}
-      </ul>
-      <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
-      <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-      <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
-      <div className="heatmap">
-        {/* TODO: add day labels above the columns */}
-        {tiles}
+      <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
+        {/* focus flare + adding session section  */}
+        <div>
+            <h1>Focus Flare</h1>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
+            <button onClick={addSession}>Add Session</button>
+            {/* heatmap section */}
+            <div style={{flex: 1}}>
+                <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
+                <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
+                <div className="heatmap">
+                    {/* TODO: add day labels above the columns */}
+                    {tiles}
+                </div>
+            </div>
+        </div>
+            {/* past sessions section */}
+        <div style={{flex: 1}}>
+            <h2>Past Sessions</h2>
+                <ul>
+                {sessions.map(s => {
+                    let d = new Date(s.date);
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    const yy = String(d.getFullYear()).slice(-2);
+                    const formattedDate = `${mm}/${dd}/${yy}`;
+                    return (
+                        <li key={s.id}>
+                        {formattedDate}: {s.hours} hour(s)
+                        <button onClick = {() => deleteSession(s.id)}>Delete</button>
+                        </li>
+                    );
+                })}
+                </ul>
+        </div>
       </div>
     </div>
   );
