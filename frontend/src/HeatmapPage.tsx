@@ -14,16 +14,11 @@ type HeatmapPageProps = { //to receive monthly totals from App.tsx
     monthlyTotals: Map<string, Map<string, number>>;
     setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
 };
-//sessions page things
-// type FocusSession = {
-//     id: number;
-//     date: string;
-//     hours: number;
-// }
-type SessionsPageProps = { //to receive monthly totals from App.tsx
-    monthlyTotals: Map<string, Map<string, number>>;
-    setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
-};
+
+// type SessionsPageProps = { //to receive monthly totals from App.tsx
+//     monthlyTotals: Map<string, Map<string, number>>;
+//     setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
+// };
 
 function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //creating a sessions state variable which is an array of Focus Sessions
@@ -101,6 +96,9 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
     });
   }
   const tiles = getDisplayMonthTiles(displayDate.month, displayDate.yr, monthlyTotals)//will hold all the tiles for current month
+  
+  
+  
   //past sessions stuff
    //creating a sessions state variable which is an array of Focus Sessions
    //NOTNEEDED RN: const [sessions, setSessions] = useState<FocusSession[]>([]);
@@ -142,7 +140,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
            })
            .catch(err => console.error("Failed to delete session:", err));
    };
-
+   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return (
     <div style={{ padding: 24 }}>
       <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
@@ -159,6 +157,9 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
                 <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
                 <div className="heatmap">
                     {/* TODO: add day labels above the columns */}
+                    {dayLabels.map(label => (
+                        <div key={label} className="tile dayLabel">{label}</div>
+                    ))}
                     {tiles}
                 </div>
             </div>
