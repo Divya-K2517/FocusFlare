@@ -30,6 +30,9 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //month/yr that is currently displayed
   //displaydate is an object w/ two properties: month and yr (displayDate.month, displayDate.yr)
   const [displayDate, setDisplayDate] = useState<{ month: number; yr: number }>({month: new Date().getMonth(), yr: new Date().getFullYear()}); 
+  //for heatmap and monthly session display
+  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   
   //makes a get request to the backend to get all the sessions
   //res is the response
@@ -140,23 +143,24 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
            })
            .catch(err => console.error("Failed to delete session:", err));
    };
-   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+   
   return (
     <div style={{ padding: 24 }}>
       <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
         {/* focus flare + adding session section  */}
         <div>
             <h1>Focus Flare</h1>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
             <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
             <button onClick={addSession}>Add Session</button>
             {/* heatmap section */}
-            <div style={{flex: 1}}>
-                <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
-                <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-                <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
+            <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
+                <div className="monthNav">
+                    <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
+                    <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                    <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
+                </div>
                 <div className="heatmap">
-                    {/* TODO: add day labels above the columns */}
                     {dayLabels.map(label => (
                         <div key={label} className="tile dayLabel">{label}</div>
                     ))}
@@ -164,23 +168,11 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
                 </div>
             </div>
         </div>
-            {/* past sessions section */}
+            {/* this month's sessions section */}
         <div style={{flex: 1}}>
-            <h2>Past Sessions</h2>
+            <h2>{`${monthNames[displayDate.month]} ${String(displayDate.yr)} Sessions`}</h2>
                 <ul>
-                {sessions.map(s => {
-                    let d = new Date(s.date);
-                    const mm = String(d.getMonth() + 1).padStart(2, '0');
-                    const dd = String(d.getDate()).padStart(2, '0');
-                    const yy = String(d.getFullYear()).slice(-2);
-                    const formattedDate = `${mm}/${dd}/${yy}`;
-                    return (
-                        <li key={s.id}>
-                        {formattedDate}: {s.hours} hour(s)
-                        <button onClick = {() => deleteSession(s.id)}>Delete</button>
-                        </li>
-                    );
-                })}
+                {getDisplayDateSessions(sessions, deleteSession, displayDate)}
                 </ul>
         </div>
       </div>
@@ -226,5 +218,34 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
     }
     console.log("tiles: ", tiles);
     return tiles;
+}
+function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:number) => void, displayDate: { month: number; yr: number }) {
+    //will return a list of sessions for the currently displayed month
+    //filtering all sessions to cut one ones that aren't from the right month
+    const displayMonthSessions = sessions.filter(s => {
+        const d = new Date(s.date);
+        return (
+            d.getUTCMonth() === displayDate.month &&
+            d.getUTCFullYear() === displayDate.yr
+        );
+    })
+    //sorting in ascending order(most recent session comes first)
+    displayMonthSessions.sort((a, b) => {
+        return (new Date(a.date).getTime() - new Date(b.date).getTime());
+    })
+    //converting each session into a html list item
+    return displayMonthSessions.reverse().map(s => {
+        let d = new Date(s.date);
+        const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(d.getUTCDate()).padStart(2, '0');
+        const yy = String(d.getUTCFullYear()).slice(-2);
+        const formattedDate = `${mm}/${dd}/${yy}`;
+        return (
+            <li key={s.id}>
+            {formattedDate}: {s.hours} hour(s)
+            <button onClick = {() => deleteSession(s.id)}>Delete</button>
+            </li>
+        );
+    });
 }
 export default HeatmapPage;
