@@ -19,6 +19,7 @@ function App() {
           <div className="nav-half">
             <Link to ="/instructions">Instructions</Link> 
           </div>
+          <h1>Focus Flare</h1>
           <div className="nav-half">
             <Link to="/">Heatmap</Link>
           </div>

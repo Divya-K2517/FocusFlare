@@ -1,4 +1,7 @@
-
+h1 {
+  display: flex;
+  font-size: xx-large;
+}
 nav {
   background-color: #efd2dc;
   align-items: center;
@@ -6,13 +9,13 @@ nav {
 .split-navbar {
   display: flex;
   width: 100%;
+  flex-direction: row;
 }
 .nav-half {
-  flex: 1 1 50%;
+  flex: 1 1 33%;
   display: flex;
   justify-content: center;
   align-items: center;
-  color:#e90d5a;
   font-family: 'Sour Gummy', sans-serif;
   font-weight: bold;
   text-decoration: none;
@@ -23,13 +26,15 @@ nav {
   font-family: 'Sour Gummy', sans-serif;
   font-weight: bold;
   text-decoration: none;
-  font-size: xx-large;
+  font-size: medium;
   display: inline-block;
   padding: 2%;
   margin-top: 4%;
   background-color: #4A323B;
   border-radius: 30px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;  
 }
 li {
   list-style-type: none;
@@ -112,7 +117,7 @@ li {
   text-align: center;
   line-height: 40px;
   border: 1px solid #4A323B;
-  border-radius: 10%;
+  border-radius: 20%;
 }
 
 .tile.dayLabel {
@@ -141,3 +146,53 @@ button {
   border-radius: 20%;
   border-width: 1px;
 }
+button:hover {
+  background-color: #4A323B;
+  color: #f4b9ce;
+}
+
+button:active {
+  background-color: #4A323B;
+  color:#f4b9ce;
+  box-shadow: 0 5px #a07a87;
+  transform: translateY(4px);
+}
+.past-session-content {
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  align-items: center;
+  column-gap: 8%;
+  border-radius: 15px;
+  background-color: #f4b9ce;
+  color: #4A323B;
+  margin: 2%;
+  padding: 1%;
+  justify-content: center;
+}
+
+.past-session-content-date{
+  flex: 1;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  font-size: xx-large;
+  align-items: center;
+  
+}
+.past-session-content-hrs {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  font-size: large;
+}
+.delete-btn{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: max-content;
+  width: max-content;
+  line-height: normal;
+} 

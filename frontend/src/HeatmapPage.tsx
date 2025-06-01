@@ -25,7 +25,10 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //setSessions will update sessions
   //0.5 is the default amount of hours
   const [sessions, setSessions] = useState<FocusSession[]>([]);
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
   const [hours, setHours] = useState(0.5);
   //month/yr that is currently displayed
   //displaydate is an object w/ two properties: month and yr (displayDate.month, displayDate.yr)
@@ -150,17 +153,18 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
         <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
             {/* focus flare + adding session section  */}
             <div className="heatmap-input">
-                <h1>Focus Flare</h1>
+                <h2>Enter Session</h2>
                 <div className="input-row">
                     <div className="input-label-group">
                         <div className="input-label">date</div>
                         <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
                     </div>
+                    
                     <div className="input-label-group">
                         <div className="input-label">hrs focused</div>
                         <input type="number" min={0.5} value={hours} step={0.5} onChange={e => setHours(Number(e.target.value))}/>
                     </div>
-                    <button onClick={addSession} >Add Session</button>
+                    <button onClick={addSession}>Add</button>
                 </div>
                 {/* heatmap section */}
                 <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
@@ -247,16 +251,31 @@ function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:num
     //converting each session into a html list item
     return (displayMonthSessions.reverse().map(s => {
         let d = new Date(s.date);
-        const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+        //const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
         const dd = String(d.getUTCDate()).padStart(2, '0');
-        const yy = String(d.getUTCFullYear()).slice(-2);
-        const formattedDate = `${mm}/${dd}/${yy}`;
+        //const yy = String(d.getUTCFullYear()).slice(-2);
+        //const formattedDate = `${mm}/${dd}/${yy}`;
         return (
-            <li key={s.id}>
-            {formattedDate}: {s.hours} hour(s)
-            <button onClick = {() => deleteSession(s.id)}>Delete</button>
-            </li>
+                <li key={s.id}>
+                    <div className="past-session-content">
+                        <div className="past-session-content-date">{dd}</div>
+                        <div className="past-session-content-hrs">{s.hours} hour(s)</div>
+                        <button onClick = {() => {
+                            if (handleDelete()) {
+                                deleteSession(s.id);
+                            }
+                        }} className="delete-btn"> 
+                            Delete
+                        </button>
+                    </div>
+                </li>
         );
     }));
+}
+function handleDelete() {
+    if (window.confirm("Are you sure you want to delete this session? It will be deleted permanently.")) {
+        return true;
+    }
+    return false;
 }
 export default HeatmapPage;
