@@ -31,7 +31,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //displaydate is an object w/ two properties: month and yr (displayDate.month, displayDate.yr)
   const [displayDate, setDisplayDate] = useState<{ month: number; yr: number }>({month: new Date().getMonth(), yr: new Date().getFullYear()}); 
   //for heatmap and monthly session display
-  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayLabels = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   
   //makes a get request to the backend to get all the sessions
@@ -152,8 +152,8 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
             <div className="heatmap-input">
                 <h1>Focus Flare</h1>
                 <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
-                <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
-                <button onClick={addSession}>Add Session</button>
+                <input type="number" min={0.5} value={hours} step={0.5} onChange={e => setHours(Number(e.target.value))}/>
+                <button onClick={addSession} >Add Session</button>
                 {/* heatmap section */}
                 <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
                     <div className="monthNav">
@@ -185,7 +185,8 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
 function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTotals: Map<string, Map<string, number>>) {
     const daysInMonth = new Date(displayYr, displayMonth + 1, 0).getDate();
     const firstDayOfWeek = new Date(displayYr, displayMonth, 1).getDay();
-    const noHrsDayColor = `rgba(100, 100, 100)` //color for days where there are no hours logged
+    const noHrsDayColor = `#f4b9ce` //color for days where there are no hours logged
+    
     //array for ech month will have 6 rows and 7 columns
     let tiles: JSX.Element[] = [];
     //filling the empty days at the beginning
@@ -205,9 +206,9 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
             //TODO
             const hours = monthMap.get(String(day)); //hours focused that day
             if (hours) { //incase the specific day has no hours logged, hours will be undefined
-                const colorIntensity = maxHrs > 0 ? hours / maxHrs : 0;
-                const color = `rgba(255, 0, 0, ${colorIntensity})`;
-                tiles.push(<div key={day} className="tile" style={{background: color}}>{day}</div>);
+                const colorIntensity = Math.min((maxHrs > 0 ? hours / maxHrs : 0) + 0.4, 1);
+                const color = `#4A323B`;
+                tiles.push(<div key={day} className="tile" style={{background: color, opacity: colorIntensity, color: '#ffffff'}}>{day}</div>);
             } else if (!hours) {
                 tiles.push(<div key={day} className="tile" style={{background: noHrsDayColor}}>{day}</div>);
             }
