@@ -15,7 +15,14 @@ function App() {
   return (
     <Router>
       <nav>
-        <Link to ="/instructions">Instructions</Link> | <Link to="/">Heatmap</Link>
+        <div className="split-navbar">
+          <div className="nav-half">
+            <Link to ="/instructions">Instructions</Link> 
+          </div>
+          <div className="nav-half">
+            <Link to="/">Heatmap</Link>
+          </div>
+        </div>
       </nav>
       <Routes>
         <Route 

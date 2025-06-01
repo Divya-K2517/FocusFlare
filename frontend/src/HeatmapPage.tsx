@@ -151,9 +151,17 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
             {/* focus flare + adding session section  */}
             <div className="heatmap-input">
                 <h1>Focus Flare</h1>
-                <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
-                <input type="number" min={0.5} value={hours} step={0.5} onChange={e => setHours(Number(e.target.value))}/>
-                <button onClick={addSession} >Add Session</button>
+                <div className="input-row">
+                    <div className="input-label-group">
+                        <div className="input-label">date</div>
+                        <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
+                    </div>
+                    <div className="input-label-group">
+                        <div className="input-label">hrs focused</div>
+                        <input type="number" min={0.5} value={hours} step={0.5} onChange={e => setHours(Number(e.target.value))}/>
+                    </div>
+                    <button onClick={addSession} >Add Session</button>
+                </div>
                 {/* heatmap section */}
                 <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
                     <div className="monthNav">
@@ -206,7 +214,7 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
             //TODO
             const hours = monthMap.get(String(day)); //hours focused that day
             if (hours) { //incase the specific day has no hours logged, hours will be undefined
-                const colorIntensity = Math.min((maxHrs > 0 ? hours / maxHrs : 0) + 0.4, 1);
+                const colorIntensity = Math.min((maxHrs > 0 ? hours / maxHrs : 0) + 0.3, 1);
                 const color = `#4A323B`;
                 tiles.push(<div key={day} className="tile" style={{background: color, opacity: colorIntensity, color: '#ffffff'}}>{day}</div>);
             } else if (!hours) {
@@ -237,7 +245,7 @@ function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:num
         return (new Date(a.date).getTime() - new Date(b.date).getTime());
     })
     //converting each session into a html list item
-    return displayMonthSessions.reverse().map(s => {
+    return (displayMonthSessions.reverse().map(s => {
         let d = new Date(s.date);
         const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
         const dd = String(d.getUTCDate()).padStart(2, '0');
@@ -249,6 +257,6 @@ function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:num
             <button onClick = {() => deleteSession(s.id)}>Delete</button>
             </li>
         );
-    });
+    }));
 }
 export default HeatmapPage;

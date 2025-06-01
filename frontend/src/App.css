@@ -1,6 +1,35 @@
 
 nav {
   background-color: #efd2dc;
+  align-items: center;
+}
+.split-navbar {
+  display: flex;
+  width: 100%;
+}
+.nav-half {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color:#e90d5a;
+  font-family: 'Sour Gummy', sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  
+}
+.split-navbar a {
+  color:#f4b9ce;
+  font-family: 'Sour Gummy', sans-serif;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: xx-large;
+  display: inline-block;
+  padding: 2%;
+  margin-top: 4%;
+  background-color: #4A323B;
+  border-radius: 30px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 li {
   list-style-type: none;
@@ -41,6 +70,26 @@ li {
 }
 .heatmap-input {
   flex:1;
+  align-items: center; 
+  display: flex;
+  flex-direction: column;
+}
+.input-label-group {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  align-items: center;
+}
+.input-label {
+  font-size: x-small;
+  
+}
+.input-row input {
+  font-family: 'Sour Gummy', sans-serif;
+}
+.input-row {
+  display: flex;
+  gap: 32px;
 }
 .monthNav {
   display: flex;
@@ -65,6 +114,7 @@ li {
   border: 1px solid #4A323B;
   border-radius: 10%;
 }
+
 .tile.dayLabel {
   border: none;
   transform: translateY(90%);
