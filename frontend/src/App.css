@@ -1,7 +1,10 @@
-.App {
-  text-align: center;
-}
 
+nav {
+  background-color: #efd2dc;
+}
+li {
+  list-style-type: none;
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -36,11 +39,14 @@
     transform: rotate(360deg);
   }
 }
-/* heatmap styles */
+.heatmap-input {
+  flex:1;
+}
 .monthNav {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 10%;
 }
 .heatmap {
   display: grid;
@@ -65,7 +71,16 @@
   height: max-content;
   line-height: 20px;
 }
-
 .empty {
   background-color: #f0f0f0;
+}
+.App {
+  min-height: 100vh;
+  text-align: center;
+  background-color: #efd2dc;
+  font-family: 'Sour Gummy', sans-serif;
+  font-weight: bold;
+}
+body {
+  font-family: 'Sour Gummy', sans-serif;
 }

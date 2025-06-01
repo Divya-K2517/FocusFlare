@@ -145,37 +145,39 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
    };
    
   return (
-    <div style={{ padding: 24 }}>
-      <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
-        {/* focus flare + adding session section  */}
-        <div>
-            <h1>Focus Flare</h1>
-            <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
-            <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
-            <button onClick={addSession}>Add Session</button>
-            {/* heatmap section */}
-            <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
-                <div className="monthNav">
-                    <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
-                    <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
-                    <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
-                </div>
-                <div className="heatmap">
-                    {dayLabels.map(label => (
-                        <div key={label} className="tile dayLabel">{label}</div>
-                    ))}
-                    {tiles}
+    <div className="App">
+        <div style={{ padding: 24 }}>
+        <div style = {{ display: 'flex', alignItems: 'flex-start', gap: 32}}>
+            {/* focus flare + adding session section  */}
+            <div className="heatmap-input">
+                <h1>Focus Flare</h1>
+                <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
+                <input type="number" min={0.5} value={hours} onChange={e => setHours(Number(e.target.value))} />
+                <button onClick={addSession}>Add Session</button>
+                {/* heatmap section */}
+                <div style={{display: 'grid', justifyContent: 'center',flex: 1}}>
+                    <div className="monthNav">
+                        <button className="changeMonth" onClick={goToPrevMonth}>&lt;</button>
+                        <span>{new Date(displayDate.yr, displayDate.month).toLocaleString('default', { month: 'long', year: 'numeric' })}</span>
+                        <button className="changeMonth" onClick={goToNextMonth}>&gt;</button>
+                    </div>
+                    <div className="heatmap">
+                        {dayLabels.map(label => (
+                            <div key={label} className="tile dayLabel">{label}</div>
+                        ))}
+                        {tiles}
+                    </div>
                 </div>
             </div>
+                {/* this month's sessions section */}
+            <div style={{flex: 1}}>
+                <h2>{`${monthNames[displayDate.month]} ${String(displayDate.yr)} Sessions`}</h2>
+                    <ul>
+                    {getDisplayDateSessions(sessions, deleteSession, displayDate)}
+                    </ul>
+            </div>
         </div>
-            {/* this month's sessions section */}
-        <div style={{flex: 1}}>
-            <h2>{`${monthNames[displayDate.month]} ${String(displayDate.yr)} Sessions`}</h2>
-                <ul>
-                {getDisplayDateSessions(sessions, deleteSession, displayDate)}
-                </ul>
         </div>
-      </div>
     </div>
   );
 }

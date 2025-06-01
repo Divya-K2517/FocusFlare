@@ -6,11 +6,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import HeatmapPage from './HeatmapPage';
 import InstructionsPage from './InstructionsPage';
 
-// type FocusSession = {
-//   id: number;
-//   date: string;
-//   hours: number;
-// }
+//color palette used: https://www.figma.com/color-palettes/ballerina/
 
 function App() {
   //monthly totals needs to be accessed by both the heatmap and past sessions page
