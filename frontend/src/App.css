@@ -127,9 +127,7 @@ li {
   line-height: 20px;
   font-size: 90%;
 }
-.empty {
-  /* background-color: #ffffff00; */
-}
+
 .App {
   min-height: 100vh;
   text-align: center;
@@ -197,3 +195,26 @@ button:active {
   width: max-content;
   line-height: normal;
 } 
+.blurbs-container{
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+}
+.blurb{
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  border-width: 4px;
+  border-radius: 40px;
+  border-style: solid;
+  border-color: #4A323B;
+  gap: 4%;
+  margin:1%;
+}
+.blurb-title{
+  font-size: x-large;
+}
+.blurb-content{
+  
+}
