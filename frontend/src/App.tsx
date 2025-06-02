@@ -21,13 +21,13 @@ function App() {
           </div>
           <h1>Focus Flare</h1>
           <div className="nav-half">
-            <Link to="/">Heatmap</Link>
+            <Link to="/heatmap">Heatmap</Link>
           </div>
         </div>
       </nav>
       <Routes>
         <Route 
-          path="/" 
+          path="/heatmap" 
           element={
             <HeatmapPage 
               monthlyTotals={monthlyTotals}

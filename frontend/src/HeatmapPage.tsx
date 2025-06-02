@@ -60,9 +60,16 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //uses post to send a new focus session to backend
   //res is the response, will add the new session to the list of sessions and re-render
   const addSession = () => {
+    // date object from the input date
+    const dateObj = new Date(date);
+    // making the display date match the entered date
+    setDisplayDate({
+        month: dateObj.getMonth(),
+        yr: dateObj.getFullYear()
+    });
      //making the date into RFC3339 format
      //"YYYY-MM-DDTHH:mm:ss.sssZ"
-    const formattedDate = new Date(date).toISOString(); 
+    const formattedDate = new Date(dateObj).toISOString(); 
     //sending to backend
     axios.post('http://localhost:8080/sessions', { date: formattedDate, hours })
       .then(res => {
@@ -80,6 +87,10 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
             mapData.set(monthKey, dayMap);
         }
         setMonthlyTotals(mapData)
+        
+      })
+      .catch(error => {
+        window.alert(error.response.data.error);
       })
   };
   console.log("current sessions: ", sessions);
@@ -146,7 +157,6 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
            })
            .catch(err => console.error("Failed to delete session:", err));
    };
-   
   return (
     <div className="App">
         <div style={{ padding: 24 }}>
@@ -157,7 +167,8 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
                 <div className="input-row">
                     <div className="input-label-group">
                         <div className="input-label">date</div>
-                        <input type="date" value={`${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01`} onChange={e => setDate(e.target.value)} />
+                        <input type="date" value={date} onChange={e => setDate(e.target.value)} />
+                        {/* `${displayDate.yr}-${String(displayDate.month + 1).padStart(2, '0')}-01` */}
                     </div>
                     
                     <div className="input-label-group">
@@ -193,7 +204,6 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
     </div>
   );
 }
-
 function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTotals: Map<string, Map<string, number>>) {
     const daysInMonth = new Date(displayYr, displayMonth + 1, 0).getDate();
     const firstDayOfWeek = new Date(displayYr, displayMonth, 1).getDay();
@@ -244,6 +254,13 @@ function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:num
             d.getUTCFullYear() === displayDate.yr
         );
     })
+    if (displayMonthSessions.length === 0) { //if array is empty
+        return (
+            <div className="past-session-content">
+                <div>No sessions yet. Stay focused!</div>
+            </div>
+        );
+    }
     //sorting in ascending order(most recent session comes first)
     displayMonthSessions.sort((a, b) => {
         return (new Date(a.date).getTime() - new Date(b.date).getTime());
@@ -251,10 +268,7 @@ function getDisplayDateSessions(sessions: FocusSession[], deleteSession: (id:num
     //converting each session into a html list item
     return (displayMonthSessions.reverse().map(s => {
         let d = new Date(s.date);
-        //const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
         const dd = String(d.getUTCDate()).padStart(2, '0');
-        //const yy = String(d.getUTCFullYear()).slice(-2);
-        //const formattedDate = `${mm}/${dd}/${yy}`;
         return (
                 <li key={s.id}>
                     <div className="past-session-content">

@@ -12,12 +12,6 @@ import (
 	"log"
 	"database/sql"
 )
-//FocusSession structure(like a class in Java)
-// type FocusSession struct {
-// 	ID int `json:"id"`
-// 	Date string `json:"date"`
-// 	Hours float32 `json:"hours"`
-// }
 
 //dict to track total hours per day
 // e.g., "2025-05" -> { "2025-05-26": 3.5, "2025-05-27": 2.0 }
@@ -98,10 +92,10 @@ func main() {
 			return
 		}
 		if incomingSession.Date.IsZero() {
-			c.JSON(400, gin.H{"error": "Date is required"})
+			c.JSON(400, gin.H{"error": "No date was entered :("})
 			return
 		} else if !IsValidDate(incomingSession.Date) {
-			c.JSON(400, gin.H{"error": "Date needs to be on or before today"})
+			c.JSON(400, gin.H{"error": "The date entered is in the future - and thats impossible. Pick one that's passed or today"})
 			return
 		}
 		//initializing a month

@@ -1,6 +1,6 @@
 h1 {
   display: flex;
-  font-size: xx-large;
+  font-size: 40px;
 }
 nav {
   background-color: #efd2dc;
@@ -58,7 +58,7 @@ li {
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  /* color: white; */
 }
 
 .App-link {
@@ -128,7 +128,7 @@ li {
   font-size: 90%;
 }
 .empty {
-  background-color: #ffffff00;
+  /* background-color: #ffffff00; */
 }
 .App {
   min-height: 100vh;
@@ -136,6 +136,7 @@ li {
   background-color: #efd2dc;
   font-family: 'Sour Gummy', sans-serif;
   font-weight: bold;
+  width: 100vw
 }
 body {
   font-family: 'Sour Gummy', sans-serif;
