@@ -1,9 +1,10 @@
 h1 {
   display: flex;
   font-size: 40px;
+  color: #4A323B;
 }
 nav {
-  background-color: #efd2dc;
+  background-color: #f4b9ce;
   align-items: center;
 }
 .split-navbar {
@@ -153,7 +154,7 @@ button:hover {
 button:active {
   background-color: #4A323B;
   color:#f4b9ce;
-  box-shadow: 0 5px #a07a87;
+  box-shadow: 0px 3px #a07a87;
   transform: translateY(4px);
 }
 .past-session-content {
