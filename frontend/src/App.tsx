@@ -15,7 +15,6 @@ function App() {
     
     <Router>
       <nav>
-      <img src="/logo.png" alt="App Logo" style={{ height: 48, marginRight: 16 }} />
         <div className="split-navbar">
           <div className="nav-half">
             <Link to ="/instructions">Instructions</Link> 
