@@ -31,11 +31,7 @@ function InstructionsPage() {
                 <div className="blurb corner bottom-right">
                     <div className="blurb-title">Privacy first</div>
                     <div className="blurb-content">Privacy matters, always. Your session data stays on your device unless you decide to back it up.</div>
-                </div>
-                    {/* <div className="blurb-title"></div>
-                    <div className="blurb-content"></div> */}
-
-                
+                </div>              
             </div>
         </div>
     );

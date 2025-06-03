@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link  } from "react-router-dom";
+//import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import HeatmapPage from './HeatmapPage';
 import InstructionsPage from './InstructionsPage';
 
@@ -17,7 +18,7 @@ function App() {
       <nav>
         <div className="split-navbar">
           <div className="nav-half">
-            <Link to ="/instructions">Instructions</Link> 
+            <Link to ="/">Instructions</Link> 
           </div>
           <h1 className="outline-text">Focus Flare</h1>
           <div className="nav-half">
@@ -36,7 +37,7 @@ function App() {
           }
         />
         <Route 
-          path="/instructions" 
+          path="/" 
           element={
             <InstructionsPage
             />
