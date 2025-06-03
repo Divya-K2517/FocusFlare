@@ -15,11 +15,6 @@ type HeatmapPageProps = { //to receive monthly totals from App.tsx
     setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
 };
 
-// type SessionsPageProps = { //to receive monthly totals from App.tsx
-//     monthlyTotals: Map<string, Map<string, number>>;
-//     setMonthlyTotals: React.Dispatch<React.SetStateAction<Map<string, Map<string, number>>>>;
-// };
-
 function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //creating a sessions state variable which is an array of Focus Sessions
   //setSessions will update sessions
@@ -228,7 +223,7 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
             //TODO
             const hours = monthMap.get(String(day)); //hours focused that day
             if (hours) { //incase the specific day has no hours logged, hours will be undefined
-                const colorIntensity = Math.min((maxHrs > 0 ? hours / maxHrs : 0) + 0.3, 1);
+                const colorIntensity = Math.min((maxHrs > 0 ? (hours / maxHrs) ** 2 : 0) + 0.3, 1);
                 const color = `#4A323B`;
                 tiles.push(<div key={day} className="tile" style={{background: color, opacity: colorIntensity, color: '#ffffff'}}>{day}</div>);
             } else if (!hours) {
