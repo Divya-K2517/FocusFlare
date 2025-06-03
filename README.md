@@ -8,10 +8,10 @@ Focus Flare is a personal productivity tracker that helps you log focus sessions
 Go, PostgreSQL, React, Typescript, Docker, HTML/CSS
 
 **📊 Features**
-* Heatmap algorithim: Visualize productivity streaks, high-focus days, and monthly progress at a glance. Made possible using a nonlinear opactity scale for dramatic color differences.
-* Session Logging: Quickly add or remove sessions
-* Responsive UI: Watch your progress updated in real time - every move you make is instantly reflected using React state management and seamlessy integrated into the database. 
-* Containerized Deployment: Run anywhere with Docker; no manual setup required.
+* <ins>Heatmap algorithim:</ins> Visualize productivity streaks, high-focus days, and monthly progress at a glance. Made possible using a nonlinear opactity scale for dramatic color differences.
+* <ins>Session Logging:</ins> Quickly add or remove sessions
+* <ins>Responsive UI:</ins> Watch your progress updated in real time - every move you make is instantly reflected using React state management and seamlessy integrated into the database. 
+* <ins>Containerized Deployment:</ins> Run anywhere with Docker; no manual setup required.
 
 **🐳 Run with Docker**
 1. Clone the repo (enter the lines below into your terminal)
@@ -32,6 +32,6 @@ Go, PostgreSQL, React, Typescript, Docker, HTML/CSS
 3. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 🙌 Acknowledgements
-Inspired by GitHub’s contribution heatmap!
+* Inspired by GitHub’s contribution heatmap!
 
 
