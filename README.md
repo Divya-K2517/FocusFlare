@@ -1,18 +1,37 @@
 # Focus Flare
 
 
-**Description:**  
+**💫 Description:**  
 Focus Flare is a personal productivity tracker that helps you log focus sessions and visualize your progress. Use the heatmap to celebrate your accomplishments, see top-focus days at a glance, and motivate your self to keep a streak going!
 
-**Demo**
-
-
-**Technologies Used:**  
+**🚀 Technologies Used:**  
 Go, PostgreSQL, React, Typescript, Docker, HTML/CSS
 
-**Prerequisites/Instructions:**  
-* The user is X and the computer is O
-* Press the restart button in the bottom right to start a new game
+**📊 Features**
+* Heatmap algorithim: Visualize productivity streaks, high-focus days, and monthly progress at a glance. Made possible using a nonlinear opactity scale for dramatic color differences.
+* Session Logging: Quickly add or remove sessions
+* Responsive UI: Watch your progress updated in real time - every move you make is instantly reflected using React state management and seamlessy integrated into the database. 
+* Containerized Deployment: Run anywhere with Docker; no manual setup required.
 
+**🐳 Run with Docker**
+1. Clone the repo (enter the lines below into your terminal)
+   - git clone [https://github.com/Divya-K2517/FocusFlare.git](https://github.com/Divya-K2517/FocusFlare.git)
+   - cd FocusFlare
+   - docker build -t focus-flare .
+   - docker run -p 8090:80 focus-flare
+2. Open [http://localhost:8090](http://localhost:8090) in your browser.
+   
+**💻 Run locally:**
+1. Install dependencies for the frontend (enter the lines below into your terminal)
+   - cd frontend
+   - npm install
+   - npm start
+2. Install and run the backend server (enter the lines below into your terminal)
+   - cd backend
+   - go run main.go
+3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+🙌 Acknowledgements
+Inspired by GitHub’s contribution heatmap!
 
 
