@@ -1,5 +1,5 @@
 # Focus Flare
-<img src="./demos/Screenshot 2025-06-03 at 9.06.29 PM.png" width="400"/> <img src="./demos/Screenshot 2025-06-03 at 9.06.36 PM.png" width="400"/>
+<img src="./frontend/Screenshot 2025-06-03 at 9.06.29 PM.png" width="400"/> <img src="./frontend/Screenshot 2025-06-03 at 9.06.36 PM.png" width="400"/>
 
 🔥 [Click here for some demos](https://drive.google.com/drive/folders/1ii_c266jMLDhEJFAn-TVAjHxv_HefTDq?usp=drive_link)
 
