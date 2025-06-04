@@ -4,6 +4,7 @@ FROM node:18-alpine AS build
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
+RUN apk add --no-cache git
 RUN npm install
 COPY . .
 RUN npm run build
