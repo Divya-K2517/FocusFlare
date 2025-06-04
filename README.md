@@ -1,5 +1,5 @@
 # Focus Flare
-
+<img src="./demos/demo.png" width="400"/> <img src="./demos/demo.png" width="400"/>
 
 **💫 Description:**  
 Focus Flare is a personal productivity tracker that helps you log focus sessions and visualize your progress. Use the heatmap to celebrate your accomplishments, see top-focus days at a glance, and motivate your self to keep a streak going!
