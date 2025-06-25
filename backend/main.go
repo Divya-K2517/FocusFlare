@@ -11,6 +11,11 @@ import (
 	"time"
 	"log"
 	"database/sql"
+	"os"
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+	"net/http"
+
 )
 
 //dict to track total hours per day
