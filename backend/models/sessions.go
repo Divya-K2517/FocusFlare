@@ -8,10 +8,10 @@ import (
 )
 
 type FocusSession struct {
+	UserID uint `json:"user_id" gorm:"index"`
 	ID    uint      `json:"id" gorm:"primaryKey"`
 	Date time.Time `json:"date" gorm:"type:date;not null;index"`
 	Hours float32 `json:"hours" gorm:"not null;check:hours > 0"`
-	//Intensity int `json:"intensity"`
 	Month string `json:"month" gorm:"index"`
 }
 
@@ -24,9 +24,10 @@ type DailyTotal struct {
 	Date time.Time 
 	TotalHours float32
 }
-
+//user auth types
 var JWTSecret = []byte(os.Getenv("JWT_SECRET"))
 type AuthClaims struct {
 	UserID uint `json:"user_id"`
 	jwt.RegisteredClaims
 }
+
