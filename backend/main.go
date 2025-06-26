@@ -11,15 +11,11 @@ import (
 	"time"
 	"log"
 	"database/sql"
-	"os"
-	"github.com/golang-jwt/jwt/v5"
-	"golang.org/x/crypto/bcrypt"
+	// "os"
+	// "github.com/golang-jwt/jwt/v5"
+	// "golang.org/x/crypto/bcrypt"
 	"net/http"
-
 )
-
-//dict to track total hours per day
-// e.g., "2025-05" -> { "2025-05-26": 3.5, "2025-05-27": 2.0 }
 
 func main() {
 	//loading .env first
@@ -124,6 +120,97 @@ func main() {
 		fmt.Println("month:", incomingSession.Month)
 		fmt.Println("session added successfully")
 		c.JSON(201, incomingSession)
+	})
+	//endpoint for signing up
+	r.POST("/signup", func(c *gin.Context){
+		var user models.User
+		err := c.ShouldBindJSON(&user); //converts the JSON data into a user struct
+		if err != nil {
+			c.JSON(400, gin.H{"error": "Invalid signup request"})
+			return
+		}
+		//hash password
+		err = user.HashPassword(user.Password); //scrambling the password before saving
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Could not hash password"})
+			return
+		}
+		//saving new user to db
+		err = database.DB.Create(&user).Error;
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Could not create user"})
+			return
+		}
+		c.Status(http.StatusCreated)
+	})
+	//endpoint to login
+	r.POST("/login", func (c *gin.Context){
+		var credentials struct {
+			Username    string `json:"username"`
+			Password string `json:"password"`
+		}
+
+		err := c.ShouldBindJSON(&credentials); //converts the JSON data into a credentials struct
+		if err != nil {
+			c.JSON(400, gin.H{"error": "Invalid request"})
+			return
+		}
+
+		var user models.User
+		//searching for a matching user in the db
+		err = database.DB.Where("username = ?", credentials.Username).First(&user).Error;
+		if err != nil {
+			c.JSON(401, gin.H{"error": "Invalid credentials"})
+			return
+		}
+		if !user.CheckPassword(credentials.Password) {
+			c.JSON(401, gin.H{"error": "Invalid credentials"})
+			return
+		}
+		//creating JWT token
+		//TODO: user is signed in for 24 hrs at a time. figure out what happens when the return to the page after 24 hrs and try to add a session
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, AuthClaims{
+			UserID: user.ID,
+			RegisteredClaims: jwt.RegisteredClaims{
+				ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			},
+		})
+		tokenString, err := token.SignedString(models.JWTSecret) //signs token with secret key
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Could not generate token"})
+			return
+		}
+		c.JSON(200, gin.H{"token": tokenString})
+	})
+	r.GET("/validate", func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"valid": false, "error": "Missing token"})
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+			//parser calls this function
+			//returns the key(jwtSecret) and an error if application 
+			return jwtSecret, nil 
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"valid": false, "error": "Invalid token"})
+			return
+		}
+
+		claims, ok := token.Claims.(*AuthClaims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"valid": false, "error": "Invalid token claims"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"valid":   true,
+			"user_id": claims.UserID,
+			"expires": claims.ExpiresAt.Format(time.RFC3339),
+		})
+
 	})
 	//method to delete sessions
 	r.DELETE("/sessions/:id", func(c *gin.Context) {

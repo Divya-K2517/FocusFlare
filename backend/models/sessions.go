@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+	"os"
+	"github.com/golang-jwt/jwt/v5"
 	//"gorm.io/gorm"
 )
 
@@ -21,4 +23,10 @@ func (FocusSession) TableName() string {
 type DailyTotal struct {
 	Date time.Time 
 	TotalHours float32
+}
+
+var JWTSecret = []byte(os.Getenv("JWT_SECRET"))
+type AuthClaims struct {
+	UserID uint `json:"user_id"`
+	jwt.RegisteredClaims
 }
