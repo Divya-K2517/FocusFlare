@@ -3,7 +3,8 @@ import axios from 'axios';
 import logo from './logo.svg';
 import './App.css';
 import { JSX } from 'react/jsx-runtime';
-
+import { useAuth } from "./AuthContext";
+import {urls} from './urls';
 
 type FocusSession = {
   id: number;
@@ -20,6 +21,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //setSessions will update sessions
   //0.5 is the default amount of hours
   const [sessions, setSessions] = useState<FocusSession[]>([]);
+  const { currentUser, logout } = useAuth();
   const [date, setDate] = useState(() => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -36,7 +38,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //res is the response
   //setSessions will update the sessions with res.data, which is an array of FocusSession objects
   useEffect(() => {
-    axios.get('http://localhost:8080/sessions')
+    axios.get(`${urls.dev}/sessions`)
       .then(res => setSessions(res.data));
 
     axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals')
@@ -66,7 +68,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
      //"YYYY-MM-DDTHH:mm:ss.sssZ"
     const formattedDate = new Date(dateObj).toISOString(); 
     //sending to backend
-    axios.post('http://localhost:8080/sessions', { date: formattedDate, hours })
+    axios.post(`${urls.dev}/sessions`, { date: formattedDate, hours })
       .then(res => {
         setSessions([...sessions, res.data]);
         // getting the updated monthly totals from backend 
