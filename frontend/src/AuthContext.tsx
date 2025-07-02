@@ -37,14 +37,14 @@ export const AuthProvider = ( {children}: {children: ReactNode}) => {
         }
     }, []);
     //signup function
-    const signup = async (email: string, password: string) => {
-        await axios.post("http://localhost:8080/signup", { email, password });
+    const signup = async (username: string, password: string) => {
+        await axios.post("http://localhost:8080/signup", { username, password });
         //sends post request to /signup endpoint
     };
     //login function
-    const login = async (email: string, password: string) => {
+    const login = async (username: string, password: string) => {
         //post request to /login endpoint
-        const res = await axios.post("/login", { email, password });
+        const res = await axios.post("/login", { username, password });
         localStorage.setItem("http://localhost:8080/token", res.data.token);
         axios.defaults.headers.common["Authorization"] = res.data.token; 
             //setting the header

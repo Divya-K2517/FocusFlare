@@ -18,6 +18,7 @@ import (
 )
 
 func main() {
+
 	//loading .env first
 	if err := godotenv.Load(); err != nil {
 		panic("Error loading .env file")
@@ -181,12 +182,15 @@ func addSessionHandler (c *gin.Context) {
 	c.JSON(201, incomingSession)
 }
 func signupHandler (c *gin.Context){
+	fmt.Println("signup handler called")
 	var user models.User
 	err := c.ShouldBindJSON(&user); //converts the JSON data into a user struct
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid signup request"})
 		return
 	}
+	fmt.Println()
+	fmt.Println("username: ", user.Username, "password: ", user.Password)
 	//hash password
 	err = user.HashPassword(user.Password); //scrambling the password before saving
 	if err != nil {

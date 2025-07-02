@@ -7,8 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"unique;not null"`
-	Password string `gorm:"not null"`
+	Username string `json:"username" gorm:"unique;not null"`
+	Password string `json:"password" gorm:"not null"`
 	Sessions []FocusSession `json:"-" gorm:"foreignKey:UserID"`
 }
 //when first creating password

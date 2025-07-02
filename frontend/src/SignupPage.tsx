@@ -3,7 +3,7 @@ import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const SignupPage: React.FC = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { signup } = useAuth();
   const navigate = useNavigate();
@@ -12,9 +12,11 @@ export const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signup(email, password);
+      console.log("username: ", username, "password: ", password);
+      await signup(username, password);
       navigate("/login");
     } catch (err) {
+      console.log("error, signup failed: ", err);
       setError("Signup failed");
     }
   };
@@ -24,10 +26,10 @@ export const SignupPage: React.FC = () => {
       <h2>Sign Up</h2>
       {error && <div style={{ color: "red" }}>{error}</div>}
       <input
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Email"
+        type="text"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+        placeholder="Username"
         required
       />
       <input
