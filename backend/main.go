@@ -15,6 +15,9 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	// "golang.org/x/crypto/bcrypt"
 	"net/http"
+	"github.com/lib/pq"
+	"errors"
+	"strings"
 )
 
 func main() {
@@ -190,7 +193,6 @@ func signupHandler (c *gin.Context){
 		return
 	}
 	fmt.Println()
-	fmt.Println("username: ", user.Username, "password: ", user.Password)
 	//hash password
 	err = user.HashPassword(user.Password); //scrambling the password before saving
 	if err != nil {
@@ -200,17 +202,31 @@ func signupHandler (c *gin.Context){
 	//saving new user to db
 	err = database.DB.Create(&user).Error;
 	if err != nil {
+		//checking that username is unique
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505"{ //this means the username is not unique
+			fmt.Println("pq err code: ", pqErr.Code);
+			c.JSON(409, gin.H{"error": "Username already exists"})
+            return
+		}
+		if strings.Contains(err.Error(),"duplicate key value violates unique constraint") {
+			//this means the username is not unique
+			c.JSON(409, gin.H{"error": "Username already exists"})
+            return
+		}
 		c.JSON(500, gin.H{"error": "Could not create user"})
+		fmt.Println("err: ", err)
 		return
+		
 	}
 	c.Status(http.StatusCreated)
 }
 func loginHandler (c *gin.Context){
+	fmt.Println("login handler called")
 	var credentials struct {
 		Username    string `json:"username"`
 		Password string `json:"password"`
 	}
-
 	err := c.ShouldBindJSON(&credentials); //converts the JSON data into a credentials struct
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request"})
@@ -221,10 +237,12 @@ func loginHandler (c *gin.Context){
 	//searching for a matching user in the db
 	err = database.DB.Where("username = ?", credentials.Username).First(&user).Error;
 	if err != nil {
+		fmt.Println("username doesnt exist: ", err)
 		c.JSON(401, gin.H{"error": "Invalid credentials"})
 		return
 	}
 	if !user.CheckPassword(credentials.Password) {
+		fmt.Println("password wrong", err)
 		c.JSON(401, gin.H{"error": "Invalid credentials"})
 		return
 	}

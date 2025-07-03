@@ -12,12 +12,16 @@ export const SignupPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("username: ", username, "password: ", password);
       await signup(username, password);
       navigate("/login");
-    } catch (err) {
+    } catch (err: any) {
       console.log("error, signup failed: ", err);
-      setError("Signup failed");
+      if (err.response && err.response.status === 409) { //this means the username is taken
+        setError("Username already exists, choose another");
+      } else {
+        setError("Signup failed");
+      }
+      
     }
   };
 
