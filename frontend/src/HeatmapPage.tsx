@@ -5,6 +5,8 @@ import './App.css';
 import { JSX } from 'react/jsx-runtime';
 import { useAuth } from "./AuthContext";
 import {urls} from './urls';
+import { useNavigate } from "react-router-dom";
+
 
 type FocusSession = {
   id: number;
@@ -33,7 +35,8 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //for heatmap and monthly session display
   const dayLabels = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  
+  const navigate = useNavigate();
+
   //makes a get request to the backend to get all the sessions
   //res is the response
   //setSessions will update the sessions with res.data, which is an array of FocusSession objects
@@ -51,7 +54,14 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
             }
             setMonthlyTotals(mapData)
         })
-        .catch(err => console.error("Error fetching monthly totals map: ", err));
+        .catch(err => {
+            if (err.response && err.response.status === 401) {
+                logout();
+                navigate("/login");
+            } else {
+                console.error("Error fetching monthly totals map: ", err);
+            }        
+        });
   }, []);
 
   //uses post to send a new focus session to backend
@@ -87,8 +97,13 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
         
       })
       .catch(error => {
-        window.alert(error.response.data.error);
-      })
+        if (error.response && error.response.status === 401) {
+            logout();
+            navigate("/login");
+        } else {
+            window.alert(error.response.data.error);
+        }
+      });
   };
   console.log("current sessions: ", sessions);
   
@@ -124,7 +139,14 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
    const fetchSessions = () => {
        return axios.get('http://localhost:8080/sessions')
            .then(res => setSessions(res.data))
-           .catch(err => console.error("Failed to fetch sessions:", err));
+           .catch(err => {
+            if (err.response.status === 401) {
+                logout();
+                navigate("/login");
+            } else {
+                console.error("Failed to fetch sessions: ", err);
+            }        
+            });
        //fetchSessions returns a Promise, ensuring it will finish before the program contintues
    };
    //
@@ -152,7 +174,14 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
                console.log("new monthly totals: ", mapData);
                setMonthlyTotals(mapData)
            })
-           .catch(err => console.error("Failed to delete session:", err));
+           .catch(err => {
+            if (err.response && err.response.status === 401) {
+                logout();
+                navigate("/login");
+            } else {
+                console.error("Failed to delete session: ", err);
+            }        
+            });
    };
   return (
     <div className="App">

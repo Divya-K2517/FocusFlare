@@ -251,7 +251,7 @@ func loginHandler (c *gin.Context){
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, models.AuthClaims{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Minute)),
 		},
 	})
 	tokenString, err := token.SignedString(models.JWTSecret) //signs token with secret key
