@@ -37,21 +37,22 @@ func main() {
 	r := gin.Default()
 	fmt.Println(".env loaded, connected to database, new router instance created")
 
-	r.Use(cors.Default())
-	
-	//method to get all sessions
-	//r.GET("/sessions", getSessionsHandler)
-	//method to get the monthly totals map
-	//r.GET("/monthly-totals", getMonthlyTotalsHandler)
-	//method to add a session
-	//r.POST("/sessions", addSessionHandler)
-	//endpoint for signing up
+	//config
+	config := cors.DefaultConfig()
+    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001"} // or 3000, match your frontend port
+    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+    config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
+    config.ExposeHeaders = []string{"Content-Length"}
+    config.AllowCredentials = true
+    config.MaxAge = 24 * time.Hour
+
+	r.Use(cors.New(config))
+
 	r.POST("/signup", signupHandler)
 	//endpoint to login
 	r.POST("/login", loginHandler)
 	r.GET("/validate", validateLoginHandler)
 	//method to delete sessions
-	//r.DELETE("/sessions/:id", deleteSessionHandler)
 
 	//auth middleware for protected routes
 	protected := r.Group("/")
@@ -251,7 +252,7 @@ func loginHandler (c *gin.Context){
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, models.AuthClaims{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 		},
 	})
 	tokenString, err := token.SignedString(models.JWTSecret) //signs token with secret key
@@ -333,7 +334,7 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("user", claims.UserID)
+		c.Set("userID", claims.UserID)
 		c.Next()
 	}
 }
