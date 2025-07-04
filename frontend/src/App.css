@@ -6,6 +6,7 @@ h1 {
 nav {
   background-color: #f4b9ce;
   align-items: center;
+  position: relative;
 }
 .split-navbar {
   display: flex;
@@ -21,7 +22,6 @@ nav {
   font-family: 'Sour Gummy', sans-serif;
   font-weight: bold;
   text-decoration: none;
-  
 }
 .split-navbar a {
   color:#f4b9ce;
@@ -171,7 +171,6 @@ button:active {
   padding: 1%;
   justify-content: center;
 }
-
 .past-session-content-date{
   flex: 1;
   display: flex;
@@ -239,7 +238,6 @@ button:active {
   align-self: center;
 }
 .blurb{
-
   border-width: 4px;
   border-radius: 40px;
   border-style: solid;
@@ -257,4 +255,15 @@ button:active {
 .blurb:hover {
   background-color: #4A323B;
   color:#efd2dc;
+}
+.logoutBtn  {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
 }

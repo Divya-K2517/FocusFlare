@@ -44,7 +44,6 @@ export const AuthProvider = ( {children}: {children: ReactNode}) => {
     //login function
     const login = async (username: string, password: string) => {
         //post request to /login endpoint
-        console.log(username, password)
         const res = await axios.post("http://localhost:8080/login", { username, password });
         localStorage.setItem("http://localhost:8080/token", res.data.token);
         axios.defaults.headers.common["Authorization"] = res.data.token; 

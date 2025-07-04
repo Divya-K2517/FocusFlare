@@ -42,7 +42,8 @@ function MainApp() {
               </ProtectedRoute>
             }
           />
-          
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </Router>
     </AuthProvider>
@@ -50,7 +51,7 @@ function MainApp() {
 }
 function NavBar() { 
   //mav bar only renders if user is logged in
-  const {currentUser} = useAuth();
+  const {currentUser, logout} = useAuth();
   if (!currentUser) return null;
 
   return (
@@ -62,6 +63,11 @@ function NavBar() {
             <h1 className="outline-text">Focus Flare</h1>
             <div className="nav-half">
               <Link to="/heatmap">Heatmap</Link>
+            </div>
+            <div className="logoutBtn">
+              <button onClick={logout}>
+                Logout
+              </button>
             </div>
           </div>
       </nav>
