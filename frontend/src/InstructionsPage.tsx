@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { useAuth } from './AuthContext';   
+import { useNavigate } from 'react-router-dom';
 
 function InstructionsPage() {
+    const { currentUser, logout } = useAuth();
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        if (!currentUser) {
+            logout();
+            navigate("/login"); 
+        }
+    }, [currentUser, navigate]);
 
     return (
         <div className="App">

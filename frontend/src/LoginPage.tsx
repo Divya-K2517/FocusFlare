@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export const LoginPage: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -8,7 +8,12 @@ export const LoginPage: React.FC = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
-    
+    const location = useLocation();
+
+    useEffect(() => {
+      setError(""); // clear error when route changes
+    }, [location.key]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {

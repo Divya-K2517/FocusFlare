@@ -35,7 +35,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
   //for heatmap and monthly session display
   const dayLabels = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
 
   //makes a get request to the backend to get all the sessions
   //res is the response
