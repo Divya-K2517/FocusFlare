@@ -29,6 +29,7 @@ export const SignupPage: React.FC = () => {
     <form onSubmit={handleSubmit}>
       <h2>Sign Up</h2>
       {error && <div style={{ color: "red" }}>{error}</div>}
+      <div className="loginSignupInput">
       <input
         type="text"
         value={username}
@@ -44,6 +45,7 @@ export const SignupPage: React.FC = () => {
         required
       />
       <button type="submit">Sign Up</button>
+      </div>
     </form>
   );
 };
