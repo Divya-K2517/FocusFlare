@@ -120,6 +120,7 @@ li {
   line-height: 40px;
   border: 1px solid #4A323B;
   border-radius: 20%;
+  position: relative;
 }
 
 .tile.dayLabel {
@@ -129,7 +130,32 @@ li {
   line-height: 20px;
   font-size: 90%;
 }
-
+.tile-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  background: #4A323B;
+  color: #efd2dc;
+  text-align: center;
+  border-radius: 8px;
+  padding: 0.1em 0.3em;
+  position: absolute;
+  left: 50%;
+  bottom: 108%; /* adjust as needed */
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 0.7em;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  box-sizing: border-box;
+  line-height: 1.2;
+}
+.tile:hover .tile-tooltip,
+.tile:focus .tile-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
 .App {
   min-height: 100vh;
   text-align: center;

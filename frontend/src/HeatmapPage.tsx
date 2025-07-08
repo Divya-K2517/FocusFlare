@@ -233,7 +233,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
 function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTotals: Map<string, Map<string, number>>) {
     const daysInMonth = new Date(displayYr, displayMonth + 1, 0).getDate();
     const firstDayOfWeek = new Date(displayYr, displayMonth, 1).getDay();
-    const noHrsDayColor = `#f4b9ce` //color for days where there are no hours logged
+    const noHrsDayColor = 'rgba(244, 185, 206, 1)' //color for days where there are no hours logged
     
     //array for ech month will have 6 rows and 7 columns
     let tiles: JSX.Element[] = [];
@@ -255,16 +255,36 @@ function getDisplayMonthTiles(displayMonth: number, displayYr: number, monthlyTo
             const hours = monthMap.get(String(day)); //hours focused that day
             if (hours) { //incase the specific day has no hours logged, hours will be undefined
                 const colorIntensity = Math.min((maxHrs > 0 ? (hours / maxHrs) ** 2 : 0) + 0.3, 1);
-                const color = `#4A323B`;
-                tiles.push(<div key={day} className="tile" style={{background: color, opacity: colorIntensity, color: '#ffffff'}}>{day}</div>);
+                const color = `rgba(74, 50, 59, ${colorIntensity})`
+                tiles.push( 
+                    <div key={day} className="tile" style={{background: color,  color: '#ffffff'}}>
+                        {day}
+                        <span className="tile-tooltip">
+                            {hours} hrs studied
+                        </span>
+                    </div>);
             } else if (!hours) {
-                tiles.push(<div key={day} className="tile" style={{background: noHrsDayColor}}>{day}</div>);
+                const hrs = 0;
+                tiles.push(
+                    <div key={day} className="tile" style={{background: noHrsDayColor}}>
+                        {day}
+                        <span className="tile-tooltip">
+                            {hrs} hrs studied
+                        </span>
+                    </div>);
             }
         } 
     } else { //if nothing is logged for the map
         for (let day = 1; day < daysInMonth + 1; day++) {
+            const hrs = 0;
             //making all the days 
-            tiles.push(<div key={day} className="tile" style={{background: noHrsDayColor}}>{day}</div>);
+            tiles.push(
+                <div key={day} className="tile" style={{background: noHrsDayColor}}>
+                    {day}
+                    <span className="tile-tooltip">
+                            {hrs} hrs studied
+                    </span>
+                </div>);
         } 
     }
     console.log("tiles: ", tiles);
