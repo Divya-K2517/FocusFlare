@@ -45,11 +45,14 @@ export const AuthProvider = ( {children}: {children: ReactNode}) => {
     const login = async (username: string, password: string) => {
         //post request to /login endpoint
         const res = await axios.post("http://localhost:8080/login", { username, password });
-        localStorage.setItem("http://localhost:8080/token", res.data.token);
-        axios.defaults.headers.common["Authorization"] = res.data.token; 
+        const authToken = res.data.token;
+        localStorage.setItem("http://localhost:8080/token", authToken);
+        axios.defaults.headers.common["Authorization"] = authToken; 
             //setting the header
             //every requst to api will have this header so backend knows which user is making the request
-        setCurrentUser({ token: res.data.token });
+        setCurrentUser({ token: authToken });
+        //storing the auth token in local storage
+        localStorage.setItem('token', authToken);
     };
     //logout function
     const logout = () => {
