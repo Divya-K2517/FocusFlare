@@ -55,15 +55,16 @@ function NavBar() {
   if (!currentUser) return null;
 
   return (
-    <nav>
-          <div className="split-navbar">
+    <nav className="navbar">
+          <div className="navbar-left">
             <div className="nav-half">
-              <Link to ="/">Instructions</Link> 
-            </div>
-            <h1 className="outline-text">Focus Flare</h1>
-            <div className="nav-half">
-              <Link to="/heatmap">Heatmap</Link>
-            </div>
+            <span className="navbar-logo" role="img" aria-label="logo">🔥</span>
+            <span className="navbar-title">Focus Flare</span>
+          </div>
+          <div className="navbar-links">
+            <Link to="/">Instructions</Link>
+            <Link to="/heatmap">Heatmap</Link>
+          </div>
             <div className="logoutBtn">
               <button onClick={logout}>
                 Logout

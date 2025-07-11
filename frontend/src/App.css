@@ -8,36 +8,72 @@ nav {
   align-items: center;
   position: relative;
 }
-.split-navbar {
+nav.navbar {
   display: flex;
-  width: 100%;
-  flex-direction: row;
-  background-color: #efd2dc;
-}
-.nav-half {
-  flex: 1 1 33%;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  font-family: 'Sour Gummy', sans-serif;
-  font-weight: bold;
-  text-decoration: none;
+  justify-content: space-between;
+  background-color: #efd2dc;
+  padding: 0.5rem 2rem;
+  position: relative;
+  min-height: 64px;
 }
-.split-navbar a {
-  color:#f4b9ce;
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+.navbar-title {
+  font-size: 1.7rem;
+  font-family: 'Sour Gummy', sans-serif;
+  color: #4A323B;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+.navbar-links a {
+  color: #f4b9ce;
+  background: #4A323B;
   font-family: 'Sour Gummy', sans-serif;
   font-weight: bold;
   text-decoration: none;
-  font-size: medium;
-  display: inline-block;
-  padding: 2%;
-  margin-top: 4%;
-  background-color: #4A323B;
+  font-size: 1.1rem;
+  padding: 0.5em 1.2em;
   border-radius: 30px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;  
+  transition: background 0.2s, color 0.2s;
 }
+
+.navbar-links a:hover {
+  background: #efd2dc;
+  color: #4A323B;
+  text-decoration: underline;
+}
+
+.navbar-logout {
+  margin-left: 1.5rem;
+  padding: 0.4em 1.1em;
+  border-radius: 30px;
+  border: none;
+  background: #4A323B;
+  color: #f4b9ce;
+  font-family: 'Sour Gummy', sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  opacity: 0.85;
+}
+
+.navbar-logout:hover {
+  background: #f4b9ce;
+  color: #4A323B;
+  opacity: 1;
+}
+
 li {
   list-style-type: none;
 }
