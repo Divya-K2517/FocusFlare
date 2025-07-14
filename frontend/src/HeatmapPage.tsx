@@ -44,7 +44,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
     axios.get(`${urls.dev}/sessions`)
       .then(res => setSessions(res.data));
 
-    axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals')
+    axios.get<Map<string, Map<string, number>>>('http://localhost:8081/monthly-totals')
         .then(res =>  { //need to convert the object into a map bc json from the backend will return a plain object not a map
             const raw = res.data;
             const mapData = new Map<string, Map<string, number>>();
@@ -82,7 +82,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
       .then(res => {
         setSessions([...sessions, res.data]);
         // getting the updated monthly totals from backend 
-        return axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals');
+        return axios.get<Map<string, Map<string, number>>>('http://localhost:8081/monthly-totals');
       })
       .then(res => { 
         //resetting monthly totals
@@ -137,7 +137,7 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
    }, []);
 
    const fetchSessions = () => {
-       return axios.get('http://localhost:8080/sessions')
+       return axios.get('http://localhost:8081/sessions')
            .then(res => setSessions(res.data))
            .catch(err => {
             if (err.response.status === 401) {
@@ -158,10 +158,10 @@ function HeatmapPage({monthlyTotals, setMonthlyTotals}: HeatmapPageProps ) {
        //4: monthly totals object is converted into a map
        //5: monthly totals is updated through setMonthlyTotals
        //6: after setMonthlyTotals() is called, a re-render of any components dependent on monthlyTotals is trigged (since monthly totals is a state variable)
-       axios.delete(`http://localhost:8080/sessions/${id}`)
+       axios.delete(`http://localhost:8081/sessions/${id}`)
            .then(() => fetchSessions())
            .then(() => {
-               return axios.get<Map<string, Map<string, number>>>('http://localhost:8080/monthly-totals');
+               return axios.get<Map<string, Map<string, number>>>('http://localhost:8081/monthly-totals');
            })
            .then(res => {
                //need to convert the object into a map bc json from the backend will return a plain object not a map

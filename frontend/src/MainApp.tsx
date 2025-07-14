@@ -58,20 +58,22 @@ function NavBar() {
     <nav className="navbar">
           <div className="navbar-left">
             <div className="nav-half">
-            <span className="navbar-logo" role="img" aria-label="logo">🔥</span>
+            {/* <span className="navbar-logo" role="img" aria-label="logo">
+                <img src="/Untitled.png" alt="logo"/>
+            </span> */}
             <span className="navbar-title">Focus Flare</span>
+            </div>
           </div>
           <div className="navbar-links">
             <Link to="/">Instructions</Link>
             <Link to="/heatmap">Heatmap</Link>
           </div>
-            <div className="logoutBtn">
-              <button onClick={logout}>
-                Logout
-              </button>
-            </div>
+          <div className="logoutBtn">
+            <button onClick={logout}>
+              Logout
+            </button>
           </div>
-      </nav>
+    </nav>
   );
 }
 export default MainApp;

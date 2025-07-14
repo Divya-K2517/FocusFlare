@@ -18,14 +18,18 @@ nav.navbar {
   min-height: 64px;
 }
 .navbar-left {
+  flex: 0 0 25%;
   display: flex;
   align-items: center;
   gap: 0.7rem;
+  min-width: 120px;
 }
 .navbar-links {
+  flex: 1 1 75%; 
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  justify-content: space-evenly;
+  gap: 0;
 }
 .navbar-title {
   font-size: 1.7rem;
@@ -35,6 +39,7 @@ nav.navbar {
   letter-spacing: 1px;
 }
 .navbar-links a {
+  text-align: center;
   color: #f4b9ce;
   background: #4A323B;
   font-family: 'Sour Gummy', sans-serif;

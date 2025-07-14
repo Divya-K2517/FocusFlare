@@ -64,7 +64,7 @@ func main() {
 		protected.DELETE("/sessions/:id", deleteSessionHandler)
 	}
 
-	r.Run(":8080")
+	r.Run(":8081")
 }
 
 func IsValidDate(date time.Time) bool {
