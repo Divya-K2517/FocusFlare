@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
+const BACKEND_URL = process.env.BACKEND_URL;
+
 interface AuthContextType {
     currentUser: UserToken | null;
     signup: (email: string, password: string) => Promise<void>;
@@ -38,15 +40,15 @@ export const AuthProvider = ( {children}: {children: ReactNode}) => {
     }, []);
     //signup function
     const signup = async (username: string, password: string) => {
-        await axios.post("http://localhost:8081/signup", { username, password });
+        await axios.post(`${BACKEND_URL}/signup`, { username, password });
         //sends post request to /signup endpoint
     };
     //login function
     const login = async (username: string, password: string) => {
         //post request to /login endpoint
-        const res = await axios.post("http://localhost:8081/login", { username, password });
+        const res = await axios.post(`${BACKEND_URL}/login`, { username, password });
         const authToken = res.data.token;
-        localStorage.setItem("http://localhost:8081/token", authToken);
+        localStorage.setItem(`${BACKEND_URL}/token`, authToken);
         axios.defaults.headers.common["Authorization"] = authToken; 
             //setting the header
             //every requst to api will have this header so backend knows which user is making the request

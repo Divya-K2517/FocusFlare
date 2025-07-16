@@ -11,7 +11,7 @@ import (
 	"time"
 	"log"
 	"database/sql"
-	// "os"
+	 "os"
 	"github.com/golang-jwt/jwt/v5"
 	// "golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -19,6 +19,13 @@ import (
 	"errors"
 	"strings"
 )
+
+var BACKEND_URL = func() string {
+    if url := os.Getenv("BACKEND_URL"); url != "" {
+        return url
+    }
+    return "http://localhost:8081"
+}()
 
 func main() {
 
@@ -39,7 +46,7 @@ func main() {
 
 	//config
 	config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001"} // or 3000, match your frontend port
+    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001", BACKEND_URL} // or 3000, match your frontend port
     config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
     config.ExposeHeaders = []string{"Content-Length"}
