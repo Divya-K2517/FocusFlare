@@ -3,7 +3,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+console.log("backend url from env:", BACKEND_URL);
+if (!BACKEND_URL) alert("Backend URL is UNDEFINED!");
 
 interface AuthContextType {
     currentUser: UserToken | null;
@@ -45,6 +47,7 @@ export const AuthProvider = ( {children}: {children: ReactNode}) => {
     };
     //login function
     const login = async (username: string, password: string) => {
+        console.log("backend url: ", BACKEND_URL);
         //post request to /login endpoint
         const res = await axios.post(`${BACKEND_URL}/login`, { username, password });
         const authToken = res.data.token;

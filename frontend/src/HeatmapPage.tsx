@@ -7,7 +7,7 @@ import { useAuth } from "./AuthContext";
 import {urls} from './urls';
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 type FocusSession = {
   id: number;
