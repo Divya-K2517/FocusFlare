@@ -8,7 +8,7 @@ import (
 )
 
 type FocusSession struct {
-	UserID uint `json:"user_id" gorm:"index"`
+	UserID uint `json:"user_id" gorm:"type:uuid;index"`
 	ID    uint      `json:"id" gorm:"primaryKey"`
 	Date time.Time `json:"date" gorm:"type:date;not null;index"`
 	Hours float32 `json:"hours" gorm:"not null;check:hours > 0"`
