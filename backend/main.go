@@ -260,12 +260,12 @@ func loginHandler (c *gin.Context){
 	err = database.DB.Where("username = ?", credentials.Username).First(&user).Error;
 	if err != nil {
 		fmt.Println("username doesnt exist: ", err)
-		c.JSON(401, gin.H{"error": "Invalid credentials"})
+		c.JSON(401, gin.H{"error": "username doesnt exist"})
 		return
 	}
 	if !user.CheckPassword(credentials.Password) {
 		fmt.Println("password wrong", err)
-		c.JSON(401, gin.H{"error": "Invalid credentials"})
+		c.JSON(401, gin.H{"error": "wrong password"})
 		return
 	}
 	//creating JWT token
