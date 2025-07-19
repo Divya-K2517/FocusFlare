@@ -46,7 +46,7 @@ func main() {
 
 	//config
 	config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001", BACKEND_URL} // or 3000, match your frontend port
+    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001", BACKEND_URL, "https://focus-flare-2h2b7h7fh-divya-k2517s-projects.vercel.app"} // or 3000, match your frontend port
     config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
     config.ExposeHeaders = []string{"Content-Length"}
