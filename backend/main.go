@@ -259,9 +259,14 @@ func loginHandler (c *gin.Context){
 	//searching for a matching user in the db
 	err = database.DB.Where("username = ?", credentials.Username).First(&user).Error;
 	if err != nil {
-		fmt.Println("username doesnt exist: ", err)
-		c.JSON(401, gin.H{"error": "username doesnt exist"})
-		return
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(401, gin.H{"error": "Invalid credentials, username not found"})
+			return
+		} else {
+			fmt.Printf("Database error: %v\n", err)
+			c.JSON(500, gin.H{"error": "Internal server error"})
+			return
+		}
 	}
 	if !user.CheckPassword(credentials.Password) {
 		fmt.Println("password wrong", err)
