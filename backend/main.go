@@ -46,12 +46,26 @@ func main() {
 
 	//config
 	config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"http://localhost:3002","http://localhost:3000", "http://localhost:3001", BACKEND_URL, "https://focus-flare-2h2b7h7fh-divya-k2517s-projects.vercel.app"} // or 3000, match your frontend port
     config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     config.AllowHeaders = []string{"Origin", "Content-Type", "Authorization", "Accept", "User-Agent", "Cache-Control", "Pragma"}
     config.ExposeHeaders = []string{"Content-Length"}
     config.AllowCredentials = true
     config.MaxAge = 24 * time.Hour
+	config.AllowOriginFunc = func(origin string) bool {
+		// Allow localhost for dev
+		if strings.HasPrefix(origin, "http://localhost:") {
+			return true
+		}
+		// Allow any Vercel deployment for this project
+		if strings.HasSuffix(origin, ".vercel.app") {
+			return true
+		}
+		// Allow your production frontend domain
+		if origin == "https://focusflare-production.up.railway.app" {
+			return true
+		}
+		return false
+	}
 
 	r.Use(cors.New(config))
 
