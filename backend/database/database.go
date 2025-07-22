@@ -29,8 +29,9 @@ func ConnectToDataBase() error {
 	DB, err = gorm.Open(postgres.New(postgres.Config{
 		DSN:                  dsn,
 		PreferSimpleProtocol:  true,
-		PrepareStmt:          false,
+		
 	}), &gorm.Config{
+		PrepareStmt:          false,
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 
