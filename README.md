@@ -14,6 +14,7 @@ Go, PostgreSQL, React, Typescript, Docker, HTML/CSS
 * <ins>Session Logging:</ins> Quickly add or remove sessions
 * <ins>Responsive UI:</ins> Watch your progress updated in real time - every move you make is instantly reflected using React state management and seamlessy integrated into the database. 
 * <ins>Containerized Deployment:</ins> Run anywhere with Docker; no manual setup required.
+* <ins>User Authentication:</ins> Securly sign up, login, and track sessions without privacy concerns thanks to Supabase Auth.
 
 **🐳 Run with Docker**
 1. Clone the repo (enter the lines below into your terminal)
