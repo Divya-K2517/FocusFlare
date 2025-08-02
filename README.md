@@ -19,10 +19,9 @@ Go, PostgreSQL, React, Typescript, Docker, HTML/CSS
 **🐳 Run with Docker**
 1. Clone the repo (enter the lines below into your terminal)
    - git clone [https://github.com/Divya-K2517/FocusFlare.git](https://github.com/Divya-K2517/FocusFlare.git)
-   - cd FocusFlare
-   - docker build -t focus-flare .
-   - docker run -p 8090:80 focus-flare
-2. Open [http://localhost:8090](http://localhost:8090) in your browser.
+2. Start the docker container
+   - docker-compose up --build
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
    
 **💻 Run locally:**
 1. Install dependencies for the frontend (enter the lines below into your terminal)
