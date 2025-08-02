@@ -1,5 +1,5 @@
 export const urls = {
-    dev: "http://localhost:8081",
+    dev: "http://localhost:8090",
     prod: null //add prod url later
 }
 

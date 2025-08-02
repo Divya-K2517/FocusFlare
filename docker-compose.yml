@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8090:8090"  # Host:Container port mapping
+    environment:
+      - PORT=8090    # Example env var for backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    env_file:  # ← Add this section
+      - ./frontend/.env
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8090  # ← Magic happens here
+    depends_on:
+      - backend
+    # volumes:
+    #   - ./backend/.env:/app/.env
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: securepassword
+      POSTGRES_USER: user
+      POSTGRES_DB: focusflare
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d focusflare"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

@@ -24,7 +24,7 @@ var BACKEND_URL = func() string {
     if url := os.Getenv("BACKEND_URL"); url != "" {
         return url
     }
-    return "http://localhost:8081"
+    return "http://localhost:8090"
 }()
 
 func main() {
@@ -85,15 +85,15 @@ func main() {
 		protected.DELETE("/sessions/:id", deleteSessionHandler)
 	}
 
-	r.Run(":8081")
+	r.Run(":8090")
 }
 
 func IsValidDate(date time.Time) bool {
 	now := time.Now();
 	today := time.Date(now.Year(), now.Month(), now.Day(), int(0),int(0),int(0),int(0), now.Location())
 	input := time.Date(date.Year(), date.Month(), date.Day(), int(0),int(0),int(0),int(0), date.Location())
-
-	return today.After(input)
+	fmt.Println("input: ", input, "today: ", today)
+	return !input.After(today)
 }
 func rebuildMonthlyTotals(rows *sql.Rows) map[string]map[string]float32{ //will return a new monthly totals
 	monthlyTotals := make(map[string]map[string]float32)
